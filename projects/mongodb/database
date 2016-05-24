@@ -1,0 +1,107 @@
+db.createCollection("Paziente", 
+	{ 
+		"id" : "0",
+		"cognome" : "pafumi",
+		"nome" : "francesco",
+		"dataDiNascita" : "26/01/1993",
+		"indirizzo" : "via principe maria carafa",
+		"telefono" : "3481122557",
+		"email" : "email@email.it",
+	}
+)
+
+db.createCollection("Install", 
+	{ 
+		"id" : "0",
+		"dove" : "messina",
+		"quando" : "24/05/2016",
+		"id_paziente" : "0",
+		"id_device" : "0",
+	}
+)
+
+db.createCollection("Device", 
+	{ 
+		"id" : "0",
+		"produttore" : "samsung",
+		"modello" : "galaxy s2",
+	}
+)
+
+db.createCollection("Misurazioni", 
+	{ 
+		"id" : "0",
+		"id_device" : "descrizione",
+		"id_parametro" : "frequenza",
+	}
+)
+
+db.createCollection("Parametri", 
+	{ 
+		"id" : "0",
+		"descrizione" : "descrizione",
+		"frequenza" : "frequenza",
+	}
+)
+
+db.createCollection("Osservazione", 
+	{ 
+		"id" : "0",
+		"timestamp" : "descrizione",
+		"value" : "frequenza",
+		"uom" : "uom",
+		"id_parametro" : "0",
+	}
+)
+
+db.createCollection("Effetto", 
+	{ 
+		"id" : "0",
+		"id_osservazione" : "descrizione",
+		"id_salute" : "frequenza",
+	}
+)
+
+db.createCollection("Salute", 
+	{ 
+		"id" : "0",
+		"timestamp" : "descrizione",
+		"malattia" : "frequenza",
+		"grado_malattia" : "frequenza",
+		"id_paziente" : "0"
+	}
+)
+
+db.createCollection("Settare", 
+	{ 
+		"id" : "0",
+		"id_terapia" : "descrizione",
+		"id_salute" : "frequenza",
+	}
+)
+
+db.createCollection("Terapia", 
+	{ 
+		"id" : "0",
+		"tempo_avvio" : "descrizione",
+		"durata" : "frequenza",
+		"medicina" : "frequenza",
+		"posologia" : "frequenza",
+	}
+)
+
+db.createCollection("Valutare", 
+	{ 
+		"id" : "0",
+		"id_dottore" : "descrizione",
+		"id_salute" : "frequenza",
+	}
+)
+
+db.createCollection("Dottore", 
+	{ 
+		"id" : "0",
+		"nome" : "descrizione",
+		"cognome" : "frequenza",
+	}
+)
