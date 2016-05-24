@@ -1,5 +1,11 @@
 from pprint import pprint
 from query import *
+import json
+
+def caricaDatiDaJson():
+    with open('dataset.json') as data_file:
+        data = json.load(data_file)
+        return data
 
 def popolaPazienti(data,db):
     for i in data['patients']:

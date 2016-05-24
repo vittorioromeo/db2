@@ -280,3 +280,28 @@ def queryPrendiRelativo(db):
     for sal in salute:
         print(sal)
     print "\n FINE QUERY \n"
+
+
+
+#PRENDI TUTTO DI TUTTI
+
+def prendiTuttoDiTutti(db):
+    queryPrendiPazienti(db)
+    queryPrendiSalute(db)
+    queryPrendiOsservazioni(db)
+    queryPrendiInstallazione(db)
+    queryPrendiParametri(db)
+    queryPrendiDevice(db)
+    queryPrendiDottore(db)
+    queryPrendiEffetto(db)
+    queryPrendiMisurazioni(db)
+    queryPrendiMonitoraggio(db)
+    queryPrendiRelativo(db)
+    queryPrendiSettare(db)
+    queryPrendiTerapia(db)
+    queryPrendiValutare(db)
+
+
+#ELIMINA DATABASE
+
+#def eliminaDatabase()
