@@ -203,7 +203,7 @@ doctors = mk_entity_table(rnd_doctor, "doctors")
 
 # Generate relations
 r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, 0.75, "install")
-r_nn_measurement = mk_nn_relation(rnd_rel_install, devices, parameters, 0.50, "measurement")
+r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, 0.50, "measurement")
 r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, 0.50, "affect")
 r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, 0.50, "evaluate")
 r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, 0.50, "set")
