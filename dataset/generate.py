@@ -12,6 +12,7 @@ def static_vars(**kwargs):
 def rndi_x(min, max):
     return random.randint(min, max - 1)
 
+# TODO: slow, bottleneck
 def rnds_x(min, max):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(rndi_x(min, max)))
 
@@ -148,7 +149,7 @@ def mk_rnd_collection(f, n):
     return result
 
 def mk_entity_table(f, name):
-    return {name: mk_rnd_collection(f, 10)}
+    return {name: mk_rnd_collection(f, 1000)}
 
 def key_of_tbl(t):
     for k, _ in t.items():
@@ -160,12 +161,15 @@ def mk_nn_relation(f, t0, t1, prob, name):
     t0_key = key_of_tbl(t0)
     t1_key = key_of_tbl(t1)
     
+    t0_id_key = "id_" + t0_key
+    t1_id_key = "id_" + t1_key
+
     for v_t0 in t0[t0_key]:
         for v_t1 in t1[t1_key]:
             if(random.random() <= prob):
                 rel_data = f()
-                rel_data["id_" + t0_key] = v_t0["id"]
-                rel_data["id_" + t1_key] = v_t1["id"]
+                rel_data[t0_id_key] = v_t0["id"]
+                rel_data[t1_id_key] = v_t1["id"]
 
                 result.append(rel_data)
 
@@ -177,6 +181,9 @@ def mk_1n_relation(f, t1, tn, prob, name):
     t1_key = key_of_tbl(t1)
     tn_key = key_of_tbl(tn)
     
+    t1_id_key = "id_" + t1_key
+    tn_id_key = "id_" + tn_key
+
     # Iterate over (1,1) table
     for v_t1 in t1[t1_key]:
         
@@ -185,37 +192,43 @@ def mk_1n_relation(f, t1, tn, prob, name):
 
         if(random.random() <= prob):
             rel_data = f()
-            rel_data["id_" + t1_key] = v_t1["id"]
-            rel_data["id_" + tn_key] = v_tn["id"]
+            rel_data[t1_id_key] = v_t1["id"]
+            rel_data[tn_id_key] = v_tn["id"]
 
             result.append(rel_data)
 
     return {name: result}
 
-# Generate entity tables
-patients = mk_entity_table(rnd_patient, "patients")
-devices = mk_entity_table(rnd_device, "devices")
-parameters = mk_entity_table(rnd_parameter, "parameters")
-observations = mk_entity_table(rnd_observation, "observations")
-therapies = mk_entity_table(rnd_therapy, "therapies")
-health_states = mk_entity_table(rnd_health_state, "health_states")
-doctors = mk_entity_table(rnd_doctor, "doctors")
+if __name__ == "__main__":
 
-# Generate relations
-r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, 0.75, "install")
-r_nn_measurement = mk_nn_relation(rnd_rel_install, devices, parameters, 0.50, "measurement")
-r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, 0.50, "affect")
-r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, 0.50, "evaluate")
-r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, 0.50, "set")
-r_1n_monitoring  = mk_1n_relation(rnd_rel_monitoring, observations, parameters, 0.50, "monitoring")
-r_1n_related = mk_1n_relation(rnd_rel_related, health_states, patients, 1.00, "related")
+    # Generate entity tables
+    patients = mk_entity_table(rnd_patient, "patients")
+    devices = mk_entity_table(rnd_device, "devices")
+    parameters = mk_entity_table(rnd_parameter, "parameters")
+    observations = mk_entity_table(rnd_observation, "observations")
+    therapies = mk_entity_table(rnd_therapy, "therapies")
+    health_states = mk_entity_table(rnd_health_state, "health_states")
+    doctors = mk_entity_table(rnd_doctor, "doctors")
 
-def merge_dicts(*args):
-    result = dict()
-    for a in args:
-        result = {**result, **a}
+    # Generate relations
+    r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, 0.75, "install")
+    r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, 0.50, "measurement")
+    r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, 0.50, "affect")
+    r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, 0.50, "evaluate")
+    r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, 0.50, "set")
+    r_1n_monitoring  = mk_1n_relation(rnd_rel_monitoring, observations, parameters, 0.50, "monitoring")
+    r_1n_related = mk_1n_relation(rnd_rel_related, health_states, patients, 1.00, "related")
 
-    return result
+    def merge_dicts(*args):
+        result = dict()
+        for a in args:
+            result = {**result, **a}
 
-result = merge_dicts(patients, devices, parameters, observations, therapies, health_states, doctors, r_nn_install, r_nn_measurement, r_nn_affect, r_nn_evaluate, r_nn_set, r_1n_monitoring, r_1n_related)
-pretty_print(result)
+        return result
+
+    result = merge_dicts(patients, devices, parameters, observations, therapies, health_states, doctors, r_nn_install, r_nn_measurement, r_nn_affect, r_nn_evaluate, r_nn_set, r_1n_monitoring, r_1n_related)
+    
+    # TODO:
+    # pretty_print(result)
+
+    print(result)
