@@ -50,7 +50,6 @@ db.createCollection("Osservazione",
 		"timestamp" : "descrizione",
 		"value" : "frequenza",
 		"uom" : "uom",
-		"id_parametro" : "0",
 	}
 )
 
@@ -68,7 +67,6 @@ db.createCollection("Salute",
 		"timestamp" : "descrizione",
 		"malattia" : "frequenza",
 		"grado_malattia" : "frequenza",
-		"id_paziente" : "0"
 	}
 )
 
@@ -103,5 +101,21 @@ db.createCollection("Dottore",
 		"id" : "0",
 		"nome" : "descrizione",
 		"cognome" : "frequenza",
+	}
+)
+
+db.createCollection("Monitoraggio", 
+	{ 
+		"id" : "0",
+		"id_osservazione" : "descrizione",
+		"id_parametro" : "frequenza",
+	}
+)
+
+db.createCollection("Relativo", 
+	{ 
+		"id" : "0",
+		"id_salute" : "descrizione",
+		"id_paziente" : "frequenza",
 	}
 )
