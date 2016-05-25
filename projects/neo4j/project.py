@@ -1,15 +1,31 @@
+#!/bin/python3
+
+# Import neo4j libraries
 from neo4jrestclient.client import GraphDatabase
 from neo4jrestclient import client
+
+# Import timer utilities
+import time
+
+# Import `sys` for command line argument parsing
 import sys
+
+# Import `json` to read the generated dataset
 import json
 
+# Given `username` and `password`, returns a connection to the neo4j db
 def make_connection(username, password):
     return GraphDatabase("http://localhost:7474", username=username, password=password)
 
-class master: 
+# Class containing an open neo4j connection and functions to manage the data
+class master:
+    # Defines a label `l` and stores it in the labels list
     def define_label(self, l):
         self.labels[l] = self.db.labels.create(l)
 
+    # Constructor
+    # Given an open connection, stores the connection in `master`
+    # Defines labels for every entity
     def __init__(self, db):
         self.db = db
         self.labels = {}
@@ -22,6 +38,7 @@ class master:
         self.define_label("therapy")
         self.define_label("health_state")
 
+    # Completely clears the database
     def delete_everything(self):
         q = '''
         MATCH (n) DETACH
@@ -30,14 +47,17 @@ class master:
 
         self.db.query(q)
 
+    # Given a `label` and a dictionary `property_dict` creates a node
+    # and returns the newly created node. The node is added to the `label`
     def mk_node_from_dict(self, label, property_dict):
+        # `**` expands a dictionary into a function call
         n = self.db.nodes.create(**property_dict)
         self.labels[label].add(n)
         return n
 
     def mk_patient(self, id, name, surname, date_of_birth, address, telephone, email):
         return self.mk_node_from_dict("patient", {
-            "id": id, 
+            "id": id,
             "name": name,
             "surname": surname,
             "date_of_birth": date_of_birth,
@@ -48,21 +68,21 @@ class master:
 
     def mk_device(self, id, manufacturer, model):
         return self.mk_node_from_dict("device", {
-            "id": id, 
+            "id": id,
             "manufacturer": manufacturer,
             "model": model
         })
 
     def mk_parameter(self, id, description, frequency):
         return self.mk_node_from_dict("parameter", {
-            "id": id, 
+            "id": id,
             "description": description,
             "frequency": frequency
         })
 
     def mk_observation(self, id, timestamp, value, uom):
         return self.mk_node_from_dict("observation", {
-            "id": id, 
+            "id": id,
             "timestamp": timestamp,
             "value": value,
             "uom": uom
@@ -70,28 +90,30 @@ class master:
 
     def mk_doctor(self, id, name, surname):
         return self.mk_node_from_dict("doctor", {
-            "id": id, 
+            "id": id,
             "name": name,
             "surname": surname
         })
 
     def mk_therapy(self, id, starting_time, duration, medicine, posology):
         return self.mk_node_from_dict("therapy", {
-            "id": id, 
-            "starting_time": starting_time, 
-            "duration": duration, 
-            "medicine": medicine, 
+            "id": id,
+            "starting_time": starting_time,
+            "duration": duration,
+            "medicine": medicine,
             "posology": posology
         })
 
     def mk_health_state(self, id, timestamp, disease_type, disease_degree):
         return self.mk_node_from_dict("health_state", {
-            "id": id, 
-            "timestamp": timestamp, 
-            "disease_type": disease_type, 
+            "id": id,
+            "timestamp": timestamp,
+            "disease_type": disease_type,
             "disease_degree": disease_degree
         })
 
+    # Creates a directed relationship from `id0:l0` to `id1:l1` with `name`
+    # and an optional set of arguments `args`
     def relate(self, l0, l1, id0, id1, name, args={}):
         n0 = self.labels[l0].get(id=id0)[0]
         n1 = self.labels[l1].get(id=id1)[0]
@@ -119,70 +141,145 @@ class master:
     def mk_r_set(self, id_therapy, id_health_state):
         return self.relate("therapy", "health_state", id_therapy, id_health_state, "manages")
 
-m = master(make_connection("neo4j", "admin"))
-m.delete_everything()
+t0 = 0
+def start_timer():
+    global t0
+    t0 = time.perf_counter()
 
-dataset_path = sys.argv[1]
-print('Reading dataset from "{0}"'.format(dataset_path))
+def end_timer():
+    global t0
+    print("Time: {:.2f}s\n".format(time.perf_counter() - t0))
 
-dataset_file = open(dataset_path, "r")
-dataset_contents = dataset_file.read()
-dataset_json = json.loads(dataset_contents)
+# Main function
+if __name__ == "__main__":
 
-ds_patients = dataset_json["patients"]
-ds_devices = dataset_json["devices"]
-ds_observations = dataset_json["observations"]
-ds_parameters = dataset_json["parameters"]
-ds_doctors = dataset_json["doctors"]
-ds_health_states = dataset_json["health_states"]
-ds_therapies = dataset_json["therapies"]
+    # Create a `master` and clear the database
+    print('Initializing `master`')
+    m = master(make_connection("neo4j", "admin"))
+    m.delete_everything()
+    print('`master` initialized')
 
-for x in ds_patients:
-    m.mk_patient(x["id"], x["name"], x["surname"], x["date_of_birth"], x["address"], x["telephone"], x["email"])
+    # Read dataset path from command line arguments
+    dataset_path = sys.argv[1]
+    print('Reading dataset from "{0}"'.format(dataset_path))
 
-for x in ds_devices:
-    m.mk_device(x["id"], x["manufacturer"], x["model"])
+    # Read the dataset file as json
+    start_timer()
+    print('Reading json dataset file')
+    dataset_file = open(dataset_path, "r")
+    dataset_contents = dataset_file.read()
+    dataset_json = json.loads(dataset_contents)
+    print('Dataset file loaded')
+    end_timer()
 
-for x in ds_observations:
-    m.mk_observation(x["id"], x["timestamp"], x["value"], x["uom"])
+    # Get json arrays for entities
+    start_timer()
+    print('Getting j1son arrays: entities')
+    ds_patients = dataset_json["patients"]
+    ds_devices = dataset_json["devices"]
+    ds_observations = dataset_json["observations"]
+    ds_parameters = dataset_json["parameters"]
+    ds_doctors = dataset_json["doctors"]
+    ds_health_states = dataset_json["health_states"]
+    ds_therapies = dataset_json["therapies"]
+    print('Done getting json arrays: entities')
+    end_timer()
 
-for x in ds_parameters:
-    m.mk_parameter(x["id"], x["description"], x["frequency"])
+    # Fill database with entities
+    start_timer()
+    print('Filling: patients')
+    for x in ds_patients:
+        m.mk_patient(x["id"], x["name"], x["surname"], x["date_of_birth"], x["address"], x["telephone"], x["email"])
+    end_timer()
 
-for x in ds_doctors:
-    m.mk_doctor(x["id"], x["name"], x["surname"])
+    start_timer()
+    print('Filling: devices')
+    for x in ds_devices:
+        m.mk_device(x["id"], x["manufacturer"], x["model"])
+    end_timer()
 
-for x in ds_health_states:
-    m.mk_health_state(x["id"], x["timestamp"], x["disease_type"], x["disease_degree"])
+    start_timer()
+    print('Filling: observations')
+    for x in ds_observations:
+        m.mk_observation(x["id"], x["timestamp"], x["value"], x["uom"])
+    end_timer()
 
-for x in ds_therapies:
-    m.mk_therapy(x["id"], x["starting_time"], x["duration"], x["medicine"], x["posology"])
+    start_timer()
+    print('Filling: parameters')
+    for x in ds_parameters:
+        m.mk_parameter(x["id"], x["description"], x["frequency"])
+    end_timer()
 
-dataset_r_install = dataset_json["install"]
-dataset_r_measurement = dataset_json["measurement"]
-dataset_r_affect = dataset_json["affect"]
-dataset_r_evaluate  = dataset_json["evaluate"]
-dataset_r_set  = dataset_json["set"]
-dataset_r_monitoring  = dataset_json["monitoring"]
-dataset_r_related = dataset_json["related"]
+    start_timer()
+    print('Filling: doctors')
+    for x in ds_doctors:
+        m.mk_doctor(x["id"], x["name"], x["surname"])
+    end_timer()
 
-for x in dataset_r_install: 
-    m.mk_r_install(x["id_patients"], x["id_devices"], x["when"], x["where"]);
+    start_timer()
+    print('Filling: health_states')
+    for x in ds_health_states:
+        m.mk_health_state(x["id"], x["timestamp"], x["disease_type"], x["disease_degree"])
+    end_timer()
 
-for x in dataset_r_measurement: 
-    m.mk_r_measurement(x["id_devices"], x["id_parameters"]);
+    start_timer()
+    print('Filling: therapies')
+    for x in ds_therapies:
+        m.mk_therapy(x["id"], x["starting_time"], x["duration"], x["medicine"], x["posology"])
+    end_timer()
 
-for x in dataset_r_monitoring: 
-    m.mk_r_monitoring(x["id_parameters"], x["id_observations"]);
+    # Get json arrays for relationships
+    start_timer()
+    print('Getting json arrays: entities')
+    dataset_r_install = dataset_json["install"]
+    dataset_r_measurement = dataset_json["measurement"]
+    dataset_r_affect = dataset_json["affect"]
+    dataset_r_evaluate  = dataset_json["evaluate"]
+    dataset_r_set  = dataset_json["set"]
+    dataset_r_monitoring  = dataset_json["monitoring"]
+    dataset_r_related = dataset_json["related"]
+    print('Done getting json arrays: relationships')
+    end_timer()
 
-for x in dataset_r_affect: 
-    m.mk_r_affect(x["id_observations"], x["id_health_states"]);
+    # Fill database with relationships
+    start_timer()
+    print('Filling: install')
+    for x in dataset_r_install:
+        m.mk_r_install(x["id_patients"], x["id_devices"], x["when"], x["where"]);
+    end_timer()
 
-for x in dataset_r_related: 
-    m.mk_r_related(x["id_patients"], x["id_health_states"]);
+    start_timer()
+    print('Filling: measurement')
+    for x in dataset_r_measurement:
+        m.mk_r_measurement(x["id_devices"], x["id_parameters"]);
+    end_timer()
 
-for x in dataset_r_evaluate: 
-    m.mk_r_evaluate(x["id_health_states"], x["id_doctors"]);
+    start_timer()
+    print('Filling: monitoring')
+    for x in dataset_r_monitoring:
+        m.mk_r_monitoring(x["id_parameters"], x["id_observations"]);
+    end_timer()
 
-for x in dataset_r_set: 
-    m.mk_r_set(x["id_therapies"], x["id_health_states"]);
+    start_timer()
+    print('Filling: affect')
+    for x in dataset_r_affect:
+        m.mk_r_affect(x["id_observations"], x["id_health_states"]);
+    end_timer()
+
+    start_timer()
+    print('Filling: related')
+    for x in dataset_r_related:
+        m.mk_r_related(x["id_patients"], x["id_health_states"]);
+    end_timer()
+
+    start_timer()
+    print('Filling: evaluate')
+    for x in dataset_r_evaluate:
+        m.mk_r_evaluate(x["id_health_states"], x["id_doctors"]);
+    end_timer()
+
+    start_timer()
+    print('Filling: set')
+    for x in dataset_r_set:
+        m.mk_r_set(x["id_therapies"], x["id_health_states"]);
+    end_timer()
