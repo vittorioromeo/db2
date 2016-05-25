@@ -304,4 +304,33 @@ def prendiTuttoDiTutti(db):
 
 #ELIMINA DATABASE
 
-#def eliminaDatabase()
+def eliminaDatabase(client):
+    client.drop_database("test")
+
+
+#CREA DATABASE test
+
+def creaDatabase(client):
+    client.create_database("test")
+    db = client.test
+    return db
+
+
+#CREA COLLEZIONI
+
+
+def creaCollezioni(db):
+    db.create_collection("Relativo", id = None, id_salute = None, id_paziente = None)
+    db.create_collection("Monitoraggio", id=None, id_osservazione=None, id_parametro=None)
+    db.create_collection("Dottore", id=None, nome=None, cognome=None)
+    db.create_collection("Valutare", id=None, id_dottore=None, id_salute=None)
+    db.create_collection("Terapia", id=None, tempo_avvio=None, durata=None, medicina=None, posologia=None)
+    db.create_collection("Settare", id=None, id_terapia=None, id_salute=None)
+    db.create_collection("Salute", id=None, timestamp=None, malattia=None, grado_malattia=None)
+    db.create_collection("Effetto", id=None, id_osservazione=None, id_salute=None)
+    db.create_collection("Osservazione", id=None, timestamp=None, value=None, uom=None)
+    db.create_collection("Parametri", id=None, descrizione=None, frequenza=None)
+    db.create_collection("Misurazioni", id=None, id_device=None, id_parametro=None)
+    db.create_collection("Device", id=None, produttore=None, modello=None)
+    db.create_collection("Install", id=None, dove=None, quando=None, id_paziente=None, id_device=None)
+    db.create_collection("Paziente", id=None, cognome=None, nome=None, dataDiNascita=None, indirizzo=None, telefono=None, email=None)
