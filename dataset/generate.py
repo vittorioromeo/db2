@@ -43,7 +43,7 @@ def xid(f):
     return res
 
 def rnd_timestamp():
-    return rndi_x(0, 1000000)
+    return rndi_x(0, 10000)
 
 @static_vars(next_id=0)
 def rnd_patient():
@@ -99,7 +99,7 @@ def rnd_health_state():
         "timestamp": rnd_timestamp(),
         "duration": rndi_x(60, 240),
         "disease_type": rnds(),
-        "disease_degree": rnds()
+        "disease_degree": rndi_x(60, 240)
     }
 
 @static_vars(next_id=0)
@@ -220,7 +220,7 @@ def mk_1n_relation(f, t1, tn, prob, name):
 if __name__ == "__main__":
 
     count = int(sys.argv[1])
-    nn_rel_count = count / 10
+    nn_rel_count = 100
 
     start_timer()
     # Generate entity tables

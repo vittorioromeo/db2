@@ -164,8 +164,12 @@ class master:
         end_timer()
     
         start_timer()
+        print('Executing...')
+        tx.execute()
+        end_timer()
+        
+        start_timer()
         print('Committing...')
-        result = tx.execute()
         tx.commit()
         end_timer()
 
@@ -206,7 +210,7 @@ if __name__ == "__main__":
 
     # Get json arrays for entities
     start_timer()
-    print('Getting j1son arrays: entities')
+    print('Getting json arrays: entities')
     ds_patients = dataset_json["patients"]
     ds_devices = dataset_json["devices"]
     ds_observations = dataset_json["observations"]
@@ -225,16 +229,42 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+
+    start_timer()
     print('Filling: devices')
     for x in ds_devices:
         m.mk_device(x["id"], x["manufacturer"], x["model"])
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+
+
+    start_timer()
     print('Filling: observations')
     for x in ds_observations:
         m.mk_observation(x["id"], x["timestamp"], x["value"], x["uom"])
     end_timer()
+
+    start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+
 
     start_timer()
     print('Filling: parameters')
@@ -256,10 +286,26 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+
+    start_timer()
     print('Filling: health_states')
     for x in ds_health_states:
         m.mk_health_state(x["id"], x["timestamp"], x["disease_type"], x["disease_degree"])
     end_timer()
+
+    start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
 
     start_timer()
     print('Filling: therapies')
@@ -306,6 +352,13 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+    start_timer()
     print('Filling: monitoring')
     for x in dataset_r_monitoring:
         m.mk_r_monitoring(x["id_parameters"], x["id_observations"]);
@@ -318,11 +371,20 @@ if __name__ == "__main__":
 
 
 
+
     start_timer()
     print('Filling: affect')
     for x in dataset_r_affect:
         m.mk_r_affect(x["id_observations"], x["id_health_states"]);
     end_timer()
+
+    start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
 
     start_timer()
     print('Filling: related')
@@ -344,6 +406,14 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+
+    start_timer()
     print('Filling: set')
     for x in dataset_r_set:
         m.mk_r_set(x["id_therapies"], x["id_health_states"]);
@@ -353,5 +423,9 @@ if __name__ == "__main__":
     print('Executing queries...')
     m.execute_generated_queries()
     end_timer()
+
+
+
+
 
     end_timer()
