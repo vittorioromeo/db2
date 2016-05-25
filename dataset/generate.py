@@ -151,7 +151,7 @@ def mk_rnd_collection(f, n):
     return result
 
 def mk_entity_table(f, name):
-    return {name: mk_rnd_collection(f, 100)}
+    return {name: mk_rnd_collection(f, 1000)}
 
 def key_of_tbl(t):
     for k, _ in t.items():
@@ -213,13 +213,13 @@ if __name__ == "__main__":
     doctors = mk_entity_table(rnd_doctor, "doctors")
 
     # Generate relations
-    r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, 0.45, "install")
-    r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, 0.30, "measurement")
-    r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, 0.30, "affect")
-    r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, 0.30, "evaluate")
-    r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, 0.30, "set")
-    r_1n_monitoring  = mk_1n_relation(rnd_rel_monitoring, observations, parameters, 0.40, "monitoring")
-    r_1n_related = mk_1n_relation(rnd_rel_related, health_states, patients, 0.50, "related")
+    r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, 0.010, "install")
+    r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, 0.010, "measurement")
+    r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, 0.010, "affect")
+    r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, 0.010, "evaluate")
+    r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, 0.010, "set")
+    r_1n_monitoring  = mk_1n_relation(rnd_rel_monitoring, observations, parameters, 0.020, "monitoring")
+    r_1n_related = mk_1n_relation(rnd_rel_related, health_states, patients, 0.030, "related")
 
     def merge_dicts(*args):
         result = dict()

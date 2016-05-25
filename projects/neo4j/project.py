@@ -1,6 +1,7 @@
 #!/bin/python3
 
 # Import neo4j libraries
+import neo4jrestclient
 from neo4jrestclient.client import GraphDatabase
 from neo4jrestclient import client
 
@@ -29,14 +30,7 @@ class master:
     def __init__(self, db):
         self.db = db
         self.labels = {}
-
-        self.define_label("patient")
-        self.define_label("device")
-        self.define_label("parameter")
-        self.define_label("observation")
-        self.define_label("doctor")
-        self.define_label("therapy")
-        self.define_label("health_state")
+        self.queries = []
 
     # Completely clears the database
     def delete_everything(self):
@@ -47,13 +41,41 @@ class master:
 
         self.db.query(q)
 
+        self.define_label("patient")
+        self.define_label("device")
+        self.define_label("parameter")
+        self.define_label("observation")
+        self.define_label("doctor")
+        self.define_label("therapy")
+        self.define_label("health_state")
+
+        tx = self.db.transaction(for_query=True)
+        tx.append("CREATE INDEX ON :patient(id)")
+        tx.append("CREATE INDEX ON :device(id)")
+        tx.append("CREATE INDEX ON :parameter(id)")
+        tx.append("CREATE INDEX ON :observation(id)")
+        tx.append("CREATE INDEX ON :doctor(id)")
+        tx.append("CREATE INDEX ON :therapy(id)")
+        tx.append("CREATE INDEX ON :health_state(id)")
+        tx.execute()
+        tx.commit()
+
     # Given a `label` and a dictionary `property_dict` creates a node
     # and returns the newly created node. The node is added to the `label`
     def mk_node_from_dict(self, label, property_dict):
+        
+        ds = "{" + ', '.join("{0}: {1}".format(key, val if isinstance(val, int) else '"' + val + '"') for (key, val) in property_dict.items()) + "}"
+        q = '''CREATE (:{0}{1})'''.format(label, ds)
+        
+        self.queries.append(q)
+
+        # print(q)
+
+        # TODO: 
         # `**` expands a dictionary into a function call
-        n = self.db.nodes.create(**property_dict)
-        self.labels[label].add(n)
-        return n
+        # n = self.db.nodes.create(**property_dict)
+        # self.labels[label].add(n)
+        # return n
 
     def mk_patient(self, id, name, surname, date_of_birth, address, telephone, email):
         return self.mk_node_from_dict("patient", {
@@ -115,10 +137,18 @@ class master:
     # Creates a directed relationship from `id0:l0` to `id1:l1` with `name`
     # and an optional set of arguments `args`
     def relate(self, l0, l1, id0, id1, name, args={}):
-        n0 = self.labels[l0].get(id=id0)[0]
-        n1 = self.labels[l1].get(id=id1)[0]
-        n0.relationships.create(name, n1, **args)
+        # TODO: parameters
+        q = '''
+        MATCH (n0:{0} {{ id:{1} }}), (n1:{2} {{ id:{3} }})
+        CREATE (n0)-[:`{4}`]->(n1)
+        '''.format(l0, id0, l1, id1, name)
+        
+        self.queries.append(q)
         return 0
+
+        # n0 = self.labels[l0].get(id=id0)[0]
+        # n1 = self.labels[l1].get(id=id1)[0]
+        # n0.relationships.create(name, n1, **args)
 
     def mk_r_install(self, id_patient, id_device, when, where):
         return self.relate("patient", "device", id_patient, id_device, "has installed", {"when":when, "where":where})
@@ -140,6 +170,22 @@ class master:
 
     def mk_r_set(self, id_therapy, id_health_state):
         return self.relate("therapy", "health_state", id_therapy, id_health_state, "manages")
+
+    def execute_generated_queries(self):
+        #self.db.query(" WITH 1 as dummy ".join(self.queries))
+
+        #return 0
+
+
+        tx = self.db.transaction(for_query=True)
+        for q in self.queries:
+            tx.append(q)
+        result = tx.execute()
+        tx.commit()
+
+        self.queries.clear()
+
+        # print(result)
 
 t0 = 0
 def start_timer():
@@ -228,6 +274,11 @@ if __name__ == "__main__":
         m.mk_therapy(x["id"], x["starting_time"], x["duration"], x["medicine"], x["posology"])
     end_timer()
 
+    print('Executing queries...')
+    start_timer()
+    m.execute_generated_queries()
+    end_timer()
+
     # Get json arrays for relationships
     start_timer()
     print('Getting json arrays: entities')
@@ -282,4 +333,9 @@ if __name__ == "__main__":
     print('Filling: set')
     for x in dataset_r_set:
         m.mk_r_set(x["id_therapies"], x["id_health_states"]);
+    end_timer()
+
+    print('Executing queries...')
+    start_timer()
+    m.execute_generated_queries()
     end_timer()
