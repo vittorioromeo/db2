@@ -34,10 +34,8 @@ class master:
 
     # Completely clears the database
     def delete_everything(self):
-        q = '''
-        MATCH (n) DETACH
-        DELETE n
-        '''
+        q = '''MATCH (n) DETACH
+        DELETE n'''
 
         self.db.query(q)
 
@@ -63,19 +61,9 @@ class master:
     # Given a `label` and a dictionary `property_dict` creates a node
     # and returns the newly created node. The node is added to the `label`
     def mk_node_from_dict(self, label, property_dict):
-        
-        ds = "{" + ', '.join("{0}: {1}".format(key, val if isinstance(val, int) else '"' + val + '"') for (key, val) in property_dict.items()) + "}"
-        q = '''CREATE (:{0}{1})'''.format(label, ds)
-        
+        ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int) else '"' + v + '"') for (k, v) in property_dict.items())
+        q = 'CREATE (:{0}{{{1}}})'.format(label, ds)        
         self.queries.append(q)
-
-        # print(q)
-
-        # TODO: 
-        # `**` expands a dictionary into a function call
-        # n = self.db.nodes.create(**property_dict)
-        # self.labels[label].add(n)
-        # return n
 
     def mk_patient(self, id, name, surname, date_of_birth, address, telephone, email):
         return self.mk_node_from_dict("patient", {
@@ -144,11 +132,6 @@ class master:
         '''.format(l0, id0, l1, id1, name)
         
         self.queries.append(q)
-        return 0
-
-        # n0 = self.labels[l0].get(id=id0)[0]
-        # n1 = self.labels[l1].get(id=id1)[0]
-        # n0.relationships.create(name, n1, **args)
 
     def mk_r_install(self, id_patient, id_device, when, where):
         return self.relate("patient", "device", id_patient, id_device, "has installed", {"when":when, "where":where})
@@ -172,20 +155,21 @@ class master:
         return self.relate("therapy", "health_state", id_therapy, id_health_state, "manages")
 
     def execute_generated_queries(self):
-        #self.db.query(" WITH 1 as dummy ".join(self.queries))
-
-        #return 0
-
-
         tx = self.db.transaction(for_query=True)
+        
+        start_timer()
+        print('Appending...')
         for q in self.queries:
             tx.append(q)
+        end_timer()
+    
+        start_timer()
+        print('Committing...')
         result = tx.execute()
         tx.commit()
+        end_timer()
 
         self.queries.clear()
-
-        # print(result)
 
 t0 = 0
 def start_timer():
@@ -257,6 +241,13 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+    start_timer()
     print('Filling: doctors')
     for x in ds_doctors:
         m.mk_doctor(x["id"], x["name"], x["surname"])
@@ -300,6 +291,13 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+    start_timer()
     print('Filling: measurement')
     for x in dataset_r_measurement:
         m.mk_r_measurement(x["id_devices"], x["id_parameters"]);
@@ -310,6 +308,13 @@ if __name__ == "__main__":
     for x in dataset_r_monitoring:
         m.mk_r_monitoring(x["id_parameters"], x["id_observations"]);
     end_timer()
+
+    start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
 
     start_timer()
     print('Filling: affect')
@@ -324,6 +329,13 @@ if __name__ == "__main__":
     end_timer()
 
     start_timer()
+    print('Executing queries...')
+    m.execute_generated_queries()
+    end_timer()
+
+
+
+    start_timer()
     print('Filling: evaluate')
     for x in dataset_r_evaluate:
         m.mk_r_evaluate(x["id_health_states"], x["id_doctors"]);
@@ -335,7 +347,7 @@ if __name__ == "__main__":
         m.mk_r_set(x["id_therapies"], x["id_health_states"]);
     end_timer()
 
-    print('Executing queries...')
     start_timer()
+    print('Executing queries...')
     m.execute_generated_queries()
     end_timer()
