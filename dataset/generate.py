@@ -3,6 +3,19 @@
 import json
 import random
 import string
+import sys
+import time
+
+t0 = []
+def start_timer():
+    global t0
+    t0.append(time.perf_counter())
+
+def end_timer():
+    global t0
+    print("Time: {:.2f}s\n".format(time.perf_counter() - t0.pop()), file=sys.stderr)
+
+count = 0
 
 def static_vars(**kwargs):
     def decorate(func):
@@ -16,6 +29,7 @@ def rndi_x(min, max):
 
 # TODO: slow, bottleneck
 def rnds_x(min, max):
+    return "aaa"
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(rndi_x(min, max)))
 
 def rnds():
@@ -151,7 +165,7 @@ def mk_rnd_collection(f, n):
     return result
 
 def mk_entity_table(f, name):
-    return {name: mk_rnd_collection(f, 1000)}
+    return {name: mk_rnd_collection(f, count)}
 
 def key_of_tbl(t):
     for k, _ in t.items():
@@ -203,6 +217,9 @@ def mk_1n_relation(f, t1, tn, prob, name):
 
 if __name__ == "__main__":
 
+    count = int(sys.argv[1])
+
+    start_timer()
     # Generate entity tables
     patients = mk_entity_table(rnd_patient, "patients")
     devices = mk_entity_table(rnd_device, "devices")
@@ -211,15 +228,19 @@ if __name__ == "__main__":
     therapies = mk_entity_table(rnd_therapy, "therapies")
     health_states = mk_entity_table(rnd_health_state, "health_states")
     doctors = mk_entity_table(rnd_doctor, "doctors")
+    end_timer()
 
     # Generate relations
-    r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, 0.010, "install")
-    r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, 0.010, "measurement")
-    r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, 0.010, "affect")
-    r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, 0.010, "evaluate")
-    r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, 0.010, "set")
-    r_1n_monitoring  = mk_1n_relation(rnd_rel_monitoring, observations, parameters, 0.020, "monitoring")
-    r_1n_related = mk_1n_relation(rnd_rel_related, health_states, patients, 0.030, "related")
+    p = 0.005
+    start_timer()
+    r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, p, "install")
+    r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, p, "measurement")
+    r_nn_affect = mk_nn_relation(rnd_rel_affect, observations, health_states, p, "affect")
+    r_nn_evaluate  = mk_nn_relation(rnd_rel_evaluate, health_states, doctors, p, "evaluate")
+    r_nn_set  = mk_nn_relation(rnd_rel_evaluate, therapies, health_states, p, "set")
+    r_1n_monitoring  = mk_1n_relation(rnd_rel_monitoring, observations, parameters, p, "monitoring")
+    r_1n_related = mk_1n_relation(rnd_rel_related, health_states, patients, p, "related")
+    end_timer()
 
     def merge_dicts(*args):
         result = dict()
@@ -228,9 +249,12 @@ if __name__ == "__main__":
 
         return result
 
+    start_timer()
     result = merge_dicts(patients, devices, parameters, observations, therapies, health_states, doctors, r_nn_install, r_nn_measurement, r_nn_affect, r_nn_evaluate, r_nn_set, r_1n_monitoring, r_1n_related)
-    
-    # TODO:
-    pretty_print(result)
+    end_timer()
 
+    # TODO:
+    start_timer()
+    pretty_print(result)
+    end_timer()
     # print(result)

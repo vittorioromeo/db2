@@ -171,14 +171,14 @@ class master:
 
         self.queries.clear()
 
-t0 = 0
+t0 = []
 def start_timer():
     global t0
-    t0 = time.perf_counter()
+    t0.append(time.perf_counter())
 
 def end_timer():
     global t0
-    print("Time: {:.2f}s\n".format(time.perf_counter() - t0))
+    print("Time: {:.2f}s\n".format(time.perf_counter() - t0.pop()))
 
 # Main function
 if __name__ == "__main__":
