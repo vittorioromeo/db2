@@ -308,14 +308,6 @@ def eliminaDatabase(client):
     client.drop_database("test")
 
 
-#CREA DATABASE test
-
-def creaDatabase(client):
-    client.create_database("test")
-    db = client.test
-    return db
-
-
 #CREA COLLEZIONI
 
 
