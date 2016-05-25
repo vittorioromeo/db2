@@ -1,0 +1,4 @@
+SELECT * FROM patients
+SELECT * FROM patients WHERE nome = ''
+SELECT patients,healthstate FROM patients JOIN healthstate ON (healstate.id_patient = patient_id) Where timestamp > ''
+seleziona le terapie dei pazienti che hanno installato un device nel (when)
