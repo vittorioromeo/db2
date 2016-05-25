@@ -9,8 +9,8 @@ tempoIniziale = time.time()
 client = MongoClient("localhost", 27017)
 db = client.test
 
-data = caricaDatiDaJson()
-pprint(data)
+prendiTuttoDiTutti(db)
+
 
 tempoFinale = time.time()
 
