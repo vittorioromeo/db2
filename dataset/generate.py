@@ -5,6 +5,7 @@ import random
 import string
 import sys
 import time
+import numpy
 
 t0 = []
 def start_timer():
@@ -16,6 +17,7 @@ def end_timer():
     print("Time: {:.2f}s\n".format(time.perf_counter() - t0.pop()), file=sys.stderr)
 
 count = 0
+nn_rel_count = 0
 
 def static_vars(**kwargs):
     def decorate(func):
@@ -180,8 +182,8 @@ def mk_nn_relation(f, t0, t1, prob, name):
     t0_id_key = "id_" + t0_key
     t1_id_key = "id_" + t1_key
 
-    for v_t0 in t0[t0_key]:
-        for v_t1 in t1[t1_key]:
+    for v_t0 in numpy.random.choice(t0[t0_key], nn_rel_count):
+        for v_t1 in numpy.random.choice(t1[t1_key], nn_rel_count):
             if(random.random() <= prob):
                 rel_data = f()
                 rel_data[t0_id_key] = v_t0["id"]
@@ -218,6 +220,7 @@ def mk_1n_relation(f, t1, tn, prob, name):
 if __name__ == "__main__":
 
     count = int(sys.argv[1])
+    nn_rel_count = count / 10
 
     start_timer()
     # Generate entity tables
