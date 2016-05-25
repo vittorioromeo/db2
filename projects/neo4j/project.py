@@ -183,6 +183,8 @@ def end_timer():
 # Main function
 if __name__ == "__main__":
 
+    start_timer()
+
     # Create a `master` and clear the database
     print('Initializing `master`')
     m = master(make_connection("neo4j", "admin"))
@@ -350,4 +352,6 @@ if __name__ == "__main__":
     start_timer()
     print('Executing queries...')
     m.execute_generated_queries()
+    end_timer()
+
     end_timer()
