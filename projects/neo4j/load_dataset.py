@@ -61,7 +61,10 @@ class master:
     # Given a `label` and a dictionary `property_dict` creates a node
     # and returns the newly created node. The node is added to the `label`
     def mk_node_from_dict(self, label, property_dict):
-        ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int) else '"' + v + '"') for (k, v) in property_dict.items())
+        # Join parameters by commas, surround non-int values with double quotes
+        ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int) else '"' + v + '"') \
+            for (k, v) in property_dict.items())
+        
         q = 'CREATE (:{0}{{{1}}})'.format(label, ds)
         self.queries.append(q)
 
