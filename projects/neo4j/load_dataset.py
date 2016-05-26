@@ -233,7 +233,11 @@ if __name__ == "__main__":
     m.execute_generated_queries()
     end_timer()
 
-
+    def bench_execute_generated_queries():
+        start_timer()
+        print('Executing queries...')
+        m.execute_generated_queries()
+        end_timer()
 
 
     start_timer()
@@ -242,10 +246,7 @@ if __name__ == "__main__":
         m.mk_device(x["id"], x["manufacturer"], x["model"])
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -257,10 +258,7 @@ if __name__ == "__main__":
         m.mk_observation(x["id"], x["timestamp"], x["value"], x["uom"])
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -272,10 +270,7 @@ if __name__ == "__main__":
         m.mk_parameter(x["id"], x["description"], x["frequency"])
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -285,10 +280,7 @@ if __name__ == "__main__":
         m.mk_doctor(x["id"], x["name"], x["surname"])
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -299,11 +291,7 @@ if __name__ == "__main__":
         m.mk_health_state(x["id"], x["timestamp"], x["disease_type"], x["disease_degree"])
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
-
+    bench_execute_generated_queries()
 
 
 
@@ -313,10 +301,7 @@ if __name__ == "__main__":
         m.mk_therapy(x["id"], x["starting_time"], x["duration"], x["medicine"], x["posology"])
     end_timer()
 
-    print('Executing queries...')
-    start_timer()
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
     # Get json arrays for relationships
     start_timer()
@@ -338,10 +323,7 @@ if __name__ == "__main__":
         m.mk_r_install(x["id_patients"], x["id_devices"], x["when"], x["where"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -351,10 +333,7 @@ if __name__ == "__main__":
         m.mk_r_measurement(x["id_devices"], x["id_parameters"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -364,10 +343,7 @@ if __name__ == "__main__":
         m.mk_r_monitoring(x["id_parameters"], x["id_observations"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -378,10 +354,7 @@ if __name__ == "__main__":
         m.mk_r_affect(x["id_observations"], x["id_health_states"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -392,10 +365,7 @@ if __name__ == "__main__":
         m.mk_r_related(x["id_patients"], x["id_health_states"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -405,10 +375,7 @@ if __name__ == "__main__":
         m.mk_r_evaluate(x["id_health_states"], x["id_doctors"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
@@ -419,10 +386,7 @@ if __name__ == "__main__":
         m.mk_r_set(x["id_therapies"], x["id_health_states"]);
     end_timer()
 
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+    bench_execute_generated_queries()
 
 
 
