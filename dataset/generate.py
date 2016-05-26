@@ -7,6 +7,8 @@ import sys
 import time
 import numpy
 
+chars = string.ascii_uppercase + string.digits
+
 t0 = []
 def start_timer():
     global t0
@@ -29,10 +31,8 @@ def static_vars(**kwargs):
 def rndi_x(min, max):
     return random.randint(min, max - 1)
 
-# TODO: slow, bottleneck
 def rnds_x(min, max):
-    return "aaa"
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(rndi_x(min, max)))
+    return ''.join(numpy.random.choice(chars, rndi_x(min, max)))
 
 def rnds():
     return rnds_x(4, 10)
@@ -220,7 +220,8 @@ def mk_1n_relation(f, t1, tn, prob, name):
 if __name__ == "__main__":
 
     count = int(sys.argv[1])
-    nn_rel_count = 100
+    nn_rel_count = int(sys.argv[2])
+    rel_prob = float(sys.argv[3])
 
     start_timer()
     # Generate entity tables
@@ -234,7 +235,7 @@ if __name__ == "__main__":
     end_timer()
 
     # Generate relations
-    p = 0.005
+    p = rel_prob
     start_timer()
     r_nn_install = mk_nn_relation(rnd_rel_install, patients, devices, p, "install")
     r_nn_measurement = mk_nn_relation(rnd_rel_measurement, devices, parameters, p, "measurement")
@@ -255,9 +256,7 @@ if __name__ == "__main__":
     start_timer()
     result = merge_dicts(patients, devices, parameters, observations, therapies, health_states, doctors, r_nn_install, r_nn_measurement, r_nn_affect, r_nn_evaluate, r_nn_set, r_1n_monitoring, r_1n_related)
     end_timer()
-
-    # TODO:
+    
     start_timer()
     pretty_print(result)
     end_timer()
-    # print(result)
