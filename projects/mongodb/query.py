@@ -13,11 +13,7 @@ def queryInserisciPaziente(db,id,cognome,nome,data,indirizzo,telefono,email):
 
 def queryPrendiPazienti(db):
     collection = db.Paziente
-    print "\n INIZIO QUERY \n"
     pazienti = collection.find({})
-    for paz in pazienti:
-        print(paz)
-    print "\n FINE QUERY \n"
 
 
 #INSTALLAZIONE
