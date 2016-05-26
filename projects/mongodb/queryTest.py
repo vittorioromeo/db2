@@ -22,10 +22,26 @@ def terzaQuery(db):
 
 def quartaQuery(db):
     #4)seleziona le terapie dei pazienti che hanno installato un device nel (when)
-    data = db.Device.find({})
+    data = db.Install.find({'quando': {'$gt': 5000}})
     for ele in data:
-        id_device = ele['id']
-        data2 = db.Install.find({'id_device' : id_device, 'quando' : {'$gt' : 5000}})
+        id_paziente = ele['id_paziente']
+        data2 = db.Relativo.find({'id_paziente' : id_paziente})
+        for ele2 in data2:
+            id_salute = ele2['id_salute']
+            data3 = db.Salute.find({'id' : id_salute})
+            for ele3 in data3:
+                id_salute = ele3['id']
+                data4 = db.Settare.find({'id_salute': id_salute})
+                for ele4 in data4:
+                    id_terapia = ele4['id_terapia']
+                    data5 = db.Terapia.find({'id': id_terapia})
+
+
+
+
+
+
+        '''data2 = db.Install.find({'quando' : {'$gt' : 5000}})
         for ele2 in data2:
             id_paziente = ele2['id_paziente']
             data3 = db.Paziente.find({'id' : id_paziente})
@@ -41,8 +57,8 @@ def quartaQuery(db):
                         for ele6 in data6:
                             id_terapia = ele6['id_terapia']
                             data7 = db.Terapia.find({'id' : id_terapia})
-                            '''for ele7 in data7:
-                                    print ele7'''
+                            for ele7 in data7:
+                                print ele7'''
 
 def settaDataset(client,db,dataset):
     eliminaDatabase(client)
