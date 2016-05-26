@@ -182,7 +182,7 @@ def start_timer():
 
 def end_timer():
     global t0
-    print("Time: {:.2f}s\n".format(time.perf_counter() - t0.pop()))
+    print("Time: {:.2f}s\n".format(time.perf_counter() - t0.pop()), file=sys.stderr)
 
 # Main function
 if __name__ == "__main__":

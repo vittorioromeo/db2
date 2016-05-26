@@ -49,20 +49,24 @@ if __name__ == "__main__":
 
     print('Query 0: select all patients')
     start_timer()
-    m.exec_query("MATCH (n:patient) RETURN n")
+    for _ in range(0, 100):
+        m.exec_query("MATCH (n:patient) RETURN n")
     end_timer()
 
     print('Query 1: select all patients by name')
     start_timer()
-    m.exec_query('MATCH (n:patient) WHERE n.name = "aaa" RETURN n')
+    for _ in range(0, 100):
+        m.exec_query('MATCH (n:patient) WHERE n.name = "aaa" RETURN n')
     end_timer()
 
     print('Query 2: select all patients and their corresponding health states filtering by timestamp')
     start_timer()
-    m.exec_query('MATCH (p:patient)-[r:has]->(h:health_state) WHERE h.timestamp > 5000 RETURN p, h')
+    for _ in range(0, 100):
+        m.exec_query('MATCH (p:patient)-[r:has]->(h:health_state) WHERE h.timestamp > 5000 RETURN p, h')
     end_timer()
 
     print('Query 3: select therapies of patients having a device installed in a specific time range')
     start_timer()
-    m.exec_query('MATCH (t:therapy)-[:manages]-(h:health_state)-[:has]-(p:patient)-[rhs:`has installed`]-(d:device) WHERE rhs.when > 100 RETURN *')
+    for _ in range(0, 100):
+        m.exec_query('MATCH (t:therapy)-[:manages]-(h:health_state)-[:has]-(p:patient)-[rhs:`has installed`]-(d:device) WHERE rhs.when > 100 RETURN *')
     end_timer()
