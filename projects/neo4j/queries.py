@@ -56,7 +56,7 @@ if __name__ == "__main__":
     print('Query 1: select all patients by name')
     start_timer()
     for _ in range(0, 100):
-        m.exec_query('MATCH (n:patient) WHERE n.name = "aaa" RETURN n')
+        m.exec_query('MATCH (n:patient) WHERE n.name = "SIVV33W0" RETURN n')
     end_timer()
 
     print('Query 2: select all patients and their corresponding health states filtering by timestamp')
@@ -68,5 +68,5 @@ if __name__ == "__main__":
     print('Query 3: select therapies of patients having a device installed in a specific time range')
     start_timer()
     for _ in range(0, 100):
-        m.exec_query('MATCH (t:therapy)-[:manages]-(h:health_state)-[:has]-(p:patient)-[rhs:`has installed`]-(d:device) WHERE rhs.when > 100 RETURN *')
+        m.exec_query('MATCH (t:therapy)-[:manages]-(h:health_state)-[:has]-(p:patient)-[rhs:`has installed`]-(d:device) WHERE rhs.when > 5000 RETURN *')
     end_timer()
