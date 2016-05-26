@@ -7,7 +7,7 @@ import sys
 import time
 import numpy
 
-chars = string.ascii_uppercase + string.digits
+chars = [c for c in string.ascii_uppercase + string.digits]
 
 t0 = []
 def start_timer():
