@@ -11,9 +11,6 @@ import time
 # Import `sys` for command line argument parsing
 import sys
 
-# Import `json` to read the generated dataset
-import json
-
 # Given `username` and `password`, returns a connection to the neo4j db
 def make_connection(username, password):
     return GraphDatabase("http://localhost:7474", username=username, password=password)
@@ -57,19 +54,19 @@ if __name__ == "__main__":
     bench_query('\
         MATCH (n:patient) \
         RETURN n')
-    
+
     print('Query 1: select all patients by name')
     bench_query('\
         MATCH (n:patient) \
         WHERE n.name = "SIVV33W0" \
         RETURN n')
-    
+
     print('Query 2: select all patients and their corresponding health states filtering by timestamp')
     bench_query('\
         MATCH (p:patient)-[r:has]->(h:health_state) \
         WHERE h.timestamp > 5000 \
         RETURN p, h')
-    
+
     print('Query 3: select therapies of patients having a device installed in a specific time range')
     bench_query('\
         MATCH (t:therapy)-[:manages]-(h:health_state)-[:has]-(p:patient)-[rhs:`has installed`]-(d:device) \

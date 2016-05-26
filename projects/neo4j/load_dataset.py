@@ -62,7 +62,7 @@ class master:
     # and returns the newly created node. The node is added to the `label`
     def mk_node_from_dict(self, label, property_dict):
         ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int) else '"' + v + '"') for (k, v) in property_dict.items())
-        q = 'CREATE (:{0}{{{1}}})'.format(label, ds)        
+        q = 'CREATE (:{0}{{{1}}})'.format(label, ds)
         self.queries.append(q)
 
     def mk_patient(self, id, name, surname, date_of_birth, address, telephone, email):
@@ -130,7 +130,7 @@ class master:
         MATCH (n0:{0} {{ id:{1} }}), (n1:{2} {{ id:{3} }})
         CREATE (n0)-[:`{4}`]->(n1)
         '''.format(l0, id0, l1, id1, name)
-        
+
         self.queries.append(q)
 
     def mk_r_install(self, id_patient, id_device, when, where):
@@ -156,18 +156,18 @@ class master:
 
     def execute_generated_queries(self):
         tx = self.db.transaction(for_query=True)
-        
+
         start_timer()
         print('Appending...')
         for q in self.queries:
             tx.append(q)
         end_timer()
-    
+
         start_timer()
         print('Executing...')
         tx.execute()
         end_timer()
-        
+
         start_timer()
         print('Committing...')
         tx.commit()
