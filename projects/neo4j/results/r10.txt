@@ -2,16 +2,16 @@ OUTPUT (../../dataset/output/ds10.json):
 Initializing `master`
 `master` initialized
 Query 0: select all patients
-Time: 0.87s
+Time: 1.09s
 
 Query 1: select all patients by name
-Time: 0.41s
+Time: 0.54s
 
 Query 2: select all patients and their corresponding health states filtering by timestamp
-Time: 0.59s
+Time: 0.80s
 
 Query 3: select therapies of patients having a device installed in a specific time range
-Time: 0.60s
+Time: 0.72s
 
 
 
