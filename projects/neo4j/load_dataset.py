@@ -64,7 +64,7 @@ class master:
         # Join parameters by commas, surround non-int values with double quotes
         ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int) else '"' + v + '"') \
             for (k, v) in property_dict.items())
-        
+
         q = 'CREATE (:{0}{{{1}}})'.format(label, ds)
         self.queries.append(q)
 
@@ -197,6 +197,21 @@ if __name__ == "__main__":
     m = master(make_connection("neo4j", "admin"))
     m.delete_everything()
     print('`master` initialized')
+  
+    def bench_execute_generated_queries():
+        start_timer()
+        print('Executing queries...')
+        m.execute_generated_queries()
+        end_timer()
+
+    def bench_execute_fill_ds(msg, collection, f):
+        start_timer()
+        print("Filling: " + msg)
+        for x in collection:
+            f()
+        end_timer()
+
+        bench_execute_generated_queries()
 
     # Read dataset path from command line arguments
     dataset_path = sys.argv[1]
@@ -224,87 +239,31 @@ if __name__ == "__main__":
     print('Done getting json arrays: entities')
     end_timer()
 
-    # Fill database with entities
-    start_timer()
-    print('Filling: patients')
-    for x in ds_patients:
-        m.mk_patient(x["id"], x["name"], x["surname"], x["date_of_birth"], x["address"], x["telephone"], x["email"])
-    end_timer()
-
     start_timer()
     print('Executing queries...')
     m.execute_generated_queries()
     end_timer()
 
-    def bench_execute_generated_queries():
-        start_timer()
-        print('Executing queries...')
-        m.execute_generated_queries()
-        end_timer()
+    bench_execute_fill_ds("patients", ds_patients, \
+        lambda: m.mk_patient(x["id"], x["name"], x["surname"], x["date_of_birth"], x["address"], x["telephone"], x["email"]))
 
+    bench_execute_fill_ds("devices", ds_devices, \
+        lambda: m.mk_device(x["id"], x["manufacturer"], x["model"]))
 
-    start_timer()
-    print('Filling: devices')
-    for x in ds_devices:
-        m.mk_device(x["id"], x["manufacturer"], x["model"])
-    end_timer()
+    bench_execute_fill_ds("observations", ds_observations, \
+        lambda: m.mk_observation(x["id"], x["timestamp"], x["value"], x["uom"]))
 
-    bench_execute_generated_queries()
+    bench_execute_fill_ds("parameters", ds_parameters, \
+        lambda: m.mk_parameter(x["id"], x["description"], x["frequency"]))
 
+    bench_execute_fill_ds("doctors", ds_doctors, \
+        lambda: m.mk_doctor(x["id"], x["name"], x["surname"]))
 
-
-
-
-    start_timer()
-    print('Filling: observations')
-    for x in ds_observations:
-        m.mk_observation(x["id"], x["timestamp"], x["value"], x["uom"])
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-
-
-    start_timer()
-    print('Filling: parameters')
-    for x in ds_parameters:
-        m.mk_parameter(x["id"], x["description"], x["frequency"])
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-    start_timer()
-    print('Filling: doctors')
-    for x in ds_doctors:
-        m.mk_doctor(x["id"], x["name"], x["surname"])
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-
-    start_timer()
-    print('Filling: health_states')
-    for x in ds_health_states:
-        m.mk_health_state(x["id"], x["timestamp"], x["disease_type"], x["disease_degree"])
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-    start_timer()
-    print('Filling: therapies')
-    for x in ds_therapies:
-        m.mk_therapy(x["id"], x["starting_time"], x["duration"], x["medicine"], x["posology"])
-    end_timer()
-
-    bench_execute_generated_queries()
+    bench_execute_fill_ds("health_states", ds_health_states, \
+        lambda: m.mk_health_state(x["id"], x["timestamp"], x["disease_type"], x["disease_degree"]))
+        
+    bench_execute_fill_ds("therapies", ds_therapies, \
+        lambda: m.mk_therapy(x["id"], x["starting_time"], x["duration"], x["medicine"], x["posology"]))
 
     # Get json arrays for relationships
     start_timer()
@@ -320,79 +279,25 @@ if __name__ == "__main__":
     end_timer()
 
     # Fill database with relationships
-    start_timer()
-    print('Filling: install')
-    for x in dataset_r_install:
-        m.mk_r_install(x["id_patients"], x["id_devices"], x["when"], x["where"]);
-    end_timer()
+    bench_execute_fill_ds("install", dataset_r_install, \
+        lambda: m.mk_r_install(x["id_patients"], x["id_devices"], x["when"], x["where"]))
 
-    bench_execute_generated_queries()
+    bench_execute_fill_ds("measurement", dataset_r_measurement, \
+        lambda: m.mk_r_measurement(x["id_devices"], x["id_parameters"]))
 
+    bench_execute_fill_ds("monitoring", dataset_r_monitoring, \
+        lambda: m.mk_r_monitoring(x["id_parameters"], x["id_observations"]))
 
+    bench_execute_fill_ds("affect", dataset_r_affect, \
+        lambda: m.mk_r_affect(x["id_observations"], x["id_health_states"]))
 
-    start_timer()
-    print('Filling: measurement')
-    for x in dataset_r_measurement:
-        m.mk_r_measurement(x["id_devices"], x["id_parameters"]);
-    end_timer()
+    bench_execute_fill_ds("related", dataset_r_related, \
+        lambda: m.mk_r_related(x["id_patients"], x["id_health_states"]))
 
-    bench_execute_generated_queries()
+    bench_execute_fill_ds("evaluate", dataset_r_evaluate, \
+        lambda: m.mk_r_evaluate(x["id_health_states"], x["id_doctors"]))
 
-
-
-    start_timer()
-    print('Filling: monitoring')
-    for x in dataset_r_monitoring:
-        m.mk_r_monitoring(x["id_parameters"], x["id_observations"]);
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-
-    start_timer()
-    print('Filling: affect')
-    for x in dataset_r_affect:
-        m.mk_r_affect(x["id_observations"], x["id_health_states"]);
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-
-    start_timer()
-    print('Filling: related')
-    for x in dataset_r_related:
-        m.mk_r_related(x["id_patients"], x["id_health_states"]);
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-    start_timer()
-    print('Filling: evaluate')
-    for x in dataset_r_evaluate:
-        m.mk_r_evaluate(x["id_health_states"], x["id_doctors"]);
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-
-    start_timer()
-    print('Filling: set')
-    for x in dataset_r_set:
-        m.mk_r_set(x["id_therapies"], x["id_health_states"]);
-    end_timer()
-
-    bench_execute_generated_queries()
-
-
-
-
+    bench_execute_fill_ds("set", dataset_r_set, \
+        lambda: m.mk_r_set(x["id_therapies"], x["id_health_states"]))
 
     end_timer()
