@@ -9,6 +9,7 @@ client = MongoClient("localhost", 27017)
 db = client.test
 
 listaDataSet = ['ds10.json','ds100.json','ds1000.json','ds10000.json','ds100000.json']
+tempototaleIniziale = time.time()
 for d in listaDataSet:
     settaDataset(client,db,d)
     listaQuery = [primaQuery,secondaQuery,terzaQuery,quartaQuery]
@@ -22,3 +23,5 @@ for d in listaDataSet:
         i = i + 1
         print str("Iterazione n ") + str(i) + str(" tempo impiegato : ") + str(tempoFinale-tempoIniziale)
     print ""
+tempototaleFinale = time.time()
+print str("Il tempo totale e : ") + str(tempototaleFinale-tempototaleIniziale)

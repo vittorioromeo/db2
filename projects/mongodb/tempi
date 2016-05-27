@@ -1,0 +1,31 @@
+Benchmark per il dataset : ds10.json
+Iterazione n 1 tempo impiegato : 0.00280594825745
+Iterazione n 2 tempo impiegato : 0.00273990631104
+Iterazione n 3 tempo impiegato : 0.0409998893738
+Iterazione n 4 tempo impiegato : 0.263421058655
+
+Benchmark per il dataset : ds100.json
+Iterazione n 1 tempo impiegato : 0.00301599502563
+Iterazione n 2 tempo impiegato : 0.00288510322571
+Iterazione n 3 tempo impiegato : 0.0517570972443
+Iterazione n 4 tempo impiegato : 7.07450199127
+
+Benchmark per il dataset : ds1000.json
+Iterazione n 1 tempo impiegato : 0.00287103652954
+Iterazione n 2 tempo impiegato : 0.0025680065155
+Iterazione n 3 tempo impiegato : 0.153104066849
+Iterazione n 4 tempo impiegato : 12.8425331116
+
+Benchmark per il dataset : ds10000.json
+Iterazione n 1 tempo impiegato : 0.00240206718445
+Iterazione n 2 tempo impiegato : 0.00223994255066
+Iterazione n 3 tempo impiegato : 0.273566007614
+Iterazione n 4 tempo impiegato : 69.5702219009
+
+Benchmark per il dataset : ds100000.json
+Iterazione n 1 tempo impiegato : 0.00328993797302
+Iterazione n 2 tempo impiegato : 0.00269794464111
+Iterazione n 3 tempo impiegato : 1.74746704102
+Iterazione n 4 tempo impiegato : 182.865236044
+
+Il tempo totale e : 570.671741009

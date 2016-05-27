@@ -306,7 +306,6 @@ def eliminaDatabase(client):
 
 #CREA COLLEZIONI
 
-
 def creaCollezioni(db):
     db.create_collection("Relativo", id = None, id_salute = None, id_paziente = None)
     db.create_collection("Monitoraggio", id=None, id_osservazione=None, id_parametro=None)

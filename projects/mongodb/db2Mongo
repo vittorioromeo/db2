@@ -1,0 +1,151 @@
+db.createCollection("Patient", 
+	{ 
+		"surname" : "None",
+		"name" : "None",
+		"date_of_birth" : "None",
+		"address" : "None",
+		"telephone" : "None",
+		"email" : "None",
+		"Health_State": [
+		{ 
+		"id_salute" : "None",
+		"timestamp" : "None",
+		"disease_type" : "None",
+		"disease_degree" : "None",
+		}],
+		"Install": [
+		{
+			"id_device" : "None",
+			"when": "None",
+			"where": "None",
+		}]
+	}
+)
+db.createCollection("Device",
+{
+	"manufacturer" : "None",
+	"model" : "None",
+	"Install": [
+		{
+			"id_patient" : "None",
+			"when": "None",
+			"where": "None",
+		}],
+	"Measurement": [
+		{
+			"id_parameter" : "None",
+		}]
+})
+db.createCollection("Parameter",
+{
+	"description" : "None",
+	"frequency" : "None",
+	"Measurement": [
+		{
+			"id_device" : "None",	
+		}],
+	"Observation": [
+	{
+		"id_observation" : "None",
+		"timestamp" : "None",
+		"value" : "None",
+		"uom" : "None",
+		"Affect": [
+		{
+			"id_health_state" : "None",
+		}],
+	}]
+})
+db.createCollection("Health_state",
+{
+	"timestamp" : "None",
+	"disease_type" : "None",
+	"disease_degree" : "None",
+	"Affect": [
+	{
+		"id_observation" : "None"	
+	}],
+	"Set": [
+	{
+		"id_terapy" : "None"	
+	}],
+	"Evaluate": [
+	{
+		"id_doctor" : "None"	
+	}],
+})
+db.createCollection("Terapy",
+{
+	"starting_time" : "None",
+	"duration" : "None",
+	"medicine" : "None",
+	"posology": "None",
+	"Set": [
+	{
+		"id_health_state" : "None",
+	}],
+})
+db.createCollection("Doctor",
+{
+	"surname" : "None",
+	"name" : "None",
+	"Evaluate": [
+	{
+		"id_health_state" : "None"	
+	}],
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+db.Paziente.insert({ 
+		"cognome" : "Pafumi",
+		"nome" : "Francesco",
+		"dataDiNascita" : "ma chi ni sacciu",
+		"indirizzo" : "bhooo",
+		"telefono" : "5454054",
+		"email" : " bgyjhftkyuftykrdf@@",
+		"Salute": [
+		{ 
+		"timestamp" : "51840",
+		"malattia" : "dio",
+		"grado_malattia" : "alta",
+		}],
+		"Install": [
+		{
+			"dove": "bho",
+			"quando": "ora!",
+		}]
+	})
+
+db.Device.insert({
+	"produttore" : "samsung",
+	"modello" : "galaxy s2",
+	"Install": [
+		{
+
+			"dove": "ma chi ni sacciu",
+			"quando": "qunnu voi",
+		}]
+})
