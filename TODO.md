@@ -1,0 +1,1 @@
+* Grafico benchmark: istogramma per ogni singola iterazione
