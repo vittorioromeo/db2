@@ -178,21 +178,21 @@ if __name__ == "__main__":
     print('Dataset file loaded')
     end_timer()
 
-    # TODO: split in separate transactions
-    for p in ds_patients:
-        q = "CREATE (n:patient {{{0}}})\n".format(make_patient_dict(p))
+    chunk_size = 100
 
-        for s in p["step_datas"]:
-            q += "CREATE (n)-[:measure]->(:measurement {{{0}}})\n".format(make_measurement_dict(s))
+    for i in range(0, len(ds_patients), chunk_size):
+        for p in ds_patients[i:i + chunk_size]:
+            q = "CREATE (n:patient {{{0}}})\n".format(make_patient_dict(p))
 
-        m.q(q)
+            for s in p["step_datas"]:
+                q += "CREATE (n)-[:measure]->(:measurement {{{0}}})\n".format(make_measurement_dict(s))
 
+            m.q(q)
 
-
-    start_timer()
-    print('Executing queries...')
-    m.execute_generated_queries()
-    end_timer()
+        start_timer()
+        print('Executing queries...')
+        m.execute_generated_queries()
+        end_timer()
 
 
     end_timer()
