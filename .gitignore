@@ -25,6 +25,7 @@ var/
 *.egg
 dataset.json
 dataset/output/*.json
+dataset_lokomat/output/*.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

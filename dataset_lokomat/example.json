@@ -1,0 +1,27 @@
+[
+    {
+        "name": "string",
+        "id": "autoinc",
+        "width": "float",
+        "height": "float",
+        "l_shank": "float",
+        "l_thigh": "float",
+        "lokomat_shank": "float",
+        "lokomat_thigh": "float",
+        "lokomat_recorded": "timestamp",
+        "version": "string",
+        "legtype": "string",
+        "lwalk_training_duration": "timestamp",
+        "lwalk_distance": "float",
+        "step_datas":
+        [
+            [0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0, 0.0, 0.0, 0.0, 
+            0.0, 0.0]
+        ]
+    }
+]
