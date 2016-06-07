@@ -10,14 +10,26 @@ import time
 
 # Import `sys` for command line argument parsing
 import sys
+import io
 
 # Import `json` to read the generated dataset
 import json
+
+class StringBuilder(object):
+    def __init__(self):
+        self._stringio = io.StringIO()
+
+    def __str__(self):
+        return self._stringio.getvalue()
+
+    def append(self, *objects, sep=' ', end=''):
+        print(*objects, sep=sep, end=end, file=self._stringio)
 
 # Given `username` and `password`, returns a connection to the neo4j db
 def make_connection(username, password):
     return GraphDatabase("http://localhost:7474", username=username, password=password)
 
+# TODO: hardcode for speed
 def make_patient_dict(p):
     x = {
         "id": p["id"],
@@ -40,6 +52,7 @@ def make_patient_dict(p):
 
     return ds
 
+# TODO: hardcode for speed
 def make_measurement_dict(m):
     x = {
         "p00": m[0],
@@ -116,7 +129,7 @@ class master:
 
         start_timer()
         print('Executing...')
-        self.currtx .execute()
+        self.currtx.execute()
         end_timer()
 
         start_timer()
@@ -127,7 +140,7 @@ class master:
         self.currtx = self.db.transaction(for_query=True)
 
     def q(self, x):
-        self.currtx.append(q)
+        self.currtx.append(str(q))
 
 t0 = []
 def start_timer():
@@ -179,15 +192,24 @@ if __name__ == "__main__":
     end_timer()
 
     chunk_size = 100
+    idx = 0
 
     for i in range(0, len(ds_patients), chunk_size):
+        q = StringBuilder()
+        
         for p in ds_patients[i:i + chunk_size]:
-            q = "CREATE (n:patient {{{0}}})\n".format(make_patient_dict(p))
+            q.append("CREATE (n"+str(idx)+":patient {")
+            q.append(make_patient_dict(p))
+            q.append("})\n")
 
             for s in p["step_datas"]:
-                q += "CREATE (n)-[:measure]->(:measurement {{{0}}})\n".format(make_measurement_dict(s))
+                q.append("CREATE (n"+str(idx)+")-[:measure]->(:measurement {")
+                q.append(make_measurement_dict(s))
+                q.append("})\n")
 
-            m.q(q)
+            idx += 1
+
+        m.q(str(q))
 
         start_timer()
         print('Executing queries...')
