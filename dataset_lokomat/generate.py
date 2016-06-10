@@ -35,7 +35,7 @@ def rnds_x(min, max):
     return ''.join(numpy.random.choice(chars, rndi_x(min, max)))
 
 def rnds():
-    return rnds_x(4, 10)
+    return rnds_x(3, 10)
 
 def xid(f):
     res = f.next_id
@@ -45,16 +45,12 @@ def xid(f):
 def rnd_timestamp():
     return rndi_x(0, 10000)
 
-def rnd_float():
-    return numpy.random.rand()
-
 def rnd_float_or_null():
-    if(rnd_float() < 0.75):
-        return rnd_float()
+    if(numpy.random.rand() < 0.75):
+        return numpy.random.rand()
     else:
         return None
 
-@static_vars(next_id=0)
 def rnd_stepdata():
     res = []
     for i in range(0, 32):
@@ -64,7 +60,7 @@ def rnd_stepdata():
 
 def rnd_stepdata_array():
     res = []
-    for i in range(0, rndi_x(0, 64)):
+    for i in range(0, rndi_x(0, 12)):
         res.append(rnd_stepdata())
 
     return res
@@ -74,17 +70,17 @@ def rnd_patient():
     return {
         "id": xid(rnd_patient),
         "name": rnds(),
-        "width": rnd_float(),
-        "height": rnd_float(),
-        "l_shank": rnd_float(),
-        "l_thigh": rnd_float(),
-        "lokomat_shank": rnd_float(),
-        "lokomat_thigh": rnd_float(),
+        "width": numpy.random.rand(),
+        "height": numpy.random.rand(),
+        "l_shank": numpy.random.rand(),
+        "l_thigh": numpy.random.rand(),
+        "lokomat_shank": numpy.random.rand(),
+        "lokomat_thigh": numpy.random.rand(),
         "lokomat_recorded": rnd_timestamp(),
         "version": rnds(),
         "legtype": rnds(),
         "lwalk_training_duration": rnd_timestamp(),
-        "lwalk_distance": rnd_float(),
+        "lwalk_distance": numpy.random.rand(),
         "step_datas": rnd_stepdata_array()
     }
 
