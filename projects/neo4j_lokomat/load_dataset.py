@@ -52,47 +52,144 @@ def make_patient_dict(p):
 
     return ds
 
+def md(x):
+    if x == None:
+        return "null"
+    else:
+        return x
+
 # TODO: hardcode for speed
 def make_measurement_dict(m):
-    x = {
-        "p00": m[0],
-        "p01": m[1],
-        "p02": m[2],
-        "p03": m[3],
-        "p04": m[4],
-        "p05": m[5],
-        "p06": m[6],
-        "p07": m[7],
-        "p08": m[8],
-        "p09": m[9],
-        "p10": m[10],
-        "p11": m[11],
-        "p12": m[12],
-        "p13": m[13],
-        "p14": m[14],
-        "p15": m[15],
-        "p16": m[16],
-        "p17": m[17],
-        "p18": m[18],
-        "p19": m[19],
-        "p20": m[20],
-        "p21": m[21],
-        "p22": m[22],
-        "p23": m[23],
-        "p24": m[24],
-        "p25": m[25],
-        "p26": m[26],
-        "p27": m[27],
-        "p28": m[28],
-        "p29": m[29],
-        "p30": m[30],
-        "p31": m[31]
-    }
+    r = StringBuilder()
 
-    ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int) or isinstance(v, float) else "null") \
-            for (k, v) in x.items())
+    r.append('"bw_support":')
+    r.append(md(m[0]))
+    r.append(', ')
+    
+    r.append('"p_coeff":')
+    r.append(md(m[1]))
+    r.append(', ')
 
-    return ds
+    r.append('"rom_hl":')
+    r.append(md(m[2]))
+    r.append(', ')
+
+    r.append('"rom_kl":')
+    r.append(md(m[3]))
+    r.append(', ')
+
+    r.append('"rom_hr":')
+    r.append(md(m[4]))
+    r.append(', ')
+
+    r.append('"rom_kr":')
+    r.append(md(m[5]))
+    r.append(', ')
+
+    r.append('"offset_rom_hl":')
+    r.append(md(m[6]))
+    r.append(', ')
+
+    r.append('"offset_rom_kl":')
+    r.append(md(m[7]))
+    r.append(', ')
+
+    r.append('"offset_rom_hr":')
+    r.append(md(m[8]))
+    r.append(', ')
+
+    r.append('"offset_rom_kr":')
+    r.append(md(m[9]))
+    r.append(', ')
+
+    r.append('"guidance_l":')
+    r.append(md(m[10]))
+    r.append(', ')
+
+    r.append('"guidance_r":')
+    r.append(md(m[11]))
+    r.append(', ')
+
+    r.append('"speed":')
+    r.append(md(m[12]))
+    r.append(', ')
+
+    r.append('"energy_hip_l":')
+    r.append(md(m[13]))
+    r.append(', ')
+
+    r.append('"energy_knee_l":')
+    r.append(md(m[14]))
+    r.append(', ')
+
+    r.append('"energy_hip_r":')
+    r.append(md(m[15]))
+    r.append(', ')
+
+    r.append('"energy_knee_r":')
+    r.append(md(m[16]))
+    r.append(', ')
+
+    r.append('"step":')
+    r.append(md(m[17]))
+    r.append(', ')
+
+    r.append('"bio_hl_st":')
+    r.append(md(m[18]))
+    r.append(', ')
+
+    r.append('"bio_hl_sw":')
+    r.append(md(m[19]))
+    r.append(', ')
+
+    r.append('"bio_kl_st":')
+    r.append(md(m[20]))
+    r.append(', ')
+
+    r.append('"bio_kl_sw":')
+    r.append(md(m[21]))
+    r.append(', ')
+
+    r.append('"bio_hr_st":')
+    r.append(md(m[22]))
+    r.append(', ')
+
+    r.append('"bio_hr_sw":')
+    r.append(md(m[23]))
+    r.append(', ')
+
+    r.append('"bio_kr_st":')
+    r.append(md(m[24]))
+    r.append(', ')
+
+    r.append('"bio_kr_sw":')
+    r.append(md(m[25]))
+    r.append(', ')
+
+    r.append('"pos_dev_hl":')
+    r.append(md(m[26]))
+    r.append(', ')
+
+    r.append('"pos_dev_hr":')
+    r.append(md(m[27]))
+    r.append(', ')
+
+    r.append('"light_c_l":')
+    r.append(md(m[28]))
+    r.append(', ')
+
+    r.append('"light_c_r":')
+    r.append(md(m[29]))
+    r.append(', ')
+
+    r.append('"unloading_l":')
+    r.append(md(m[30]))
+    r.append(', ')
+
+    r.append('"unloading_r":')
+    r.append(md(m[31]))
+
+    return str(r)
 
 # Class containing an open neo4j connection and functions to manage the data
 class master:
@@ -196,7 +293,7 @@ if __name__ == "__main__":
 
     for i in range(0, len(ds_patients), chunk_size):
         q = StringBuilder()
-        
+
         for p in ds_patients[i:i + chunk_size]:
             q.append("CREATE (n"+str(idx)+":patient {")
             q.append(make_patient_dict(p))
