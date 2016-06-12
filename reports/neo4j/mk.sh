@@ -1,2 +1,2 @@
 #!/bin/bash
-make pdf && (chromium ./output/thesis.pdf &)&
+make pdf && (chromium ./output/report.pdf &)&
