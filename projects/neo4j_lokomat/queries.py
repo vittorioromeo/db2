@@ -12,6 +12,8 @@ import time
 # Import `sys` for command line argument parsing
 import sys
 
+
+
 # Given `username` and `password`, returns a connection to the neo4j db
 def make_connection(username, password):
     return GraphDatabase("http://localhost:7474", username=username, password=password)
@@ -23,7 +25,9 @@ def start_timer():
 
 def end_timer():
     global t0
-    print("Time: {:.2f}s\n".format(time.perf_counter() - t0.pop()))
+    val = time.perf_counter() - t0.pop()
+    # print("Time: {:.2f}s\n".format(val))
+    return val
 
 
 # Class containing an open neo4j connection and functions to manage the data
@@ -37,14 +41,24 @@ class master:
     def exec_query(self, q):
         self.db.query(q)
 
-def bench_query(q):
-    start_timer()
-    for _ in range(0, 100):
+def bench_query(lbl, q):
+    xs = []
+    ys = []
+
+    for i in range(0, 50):
+        xs.append(i)
+        start_timer()
         m.exec_query(q)
-    end_timer()
+        ys.append(end_timer())
+
+    plt.plot(xs, ys, label=lbl)
+    
+    
 
 # Main function
 if __name__ == "__main__":
+
+    outfile = sys.argv[1]
 
     # Create a `master` and clear the database
     print('Initializing `master`')
@@ -52,19 +66,22 @@ if __name__ == "__main__":
     print('`master` initialized')
 
     print('Query 0: select all patients')
-    bench_query('\
+    bench_query('query0', '\
         MATCH (n:patient) \
         RETURN n')
 
     print('Query 1: select all patients by name')
-    bench_query('\
+    bench_query('query1', '\
         MATCH (n:patient) \
-        WHERE n.name = "SIVV33W0" \
+        WHERE n.n = "SIVV33W0" \
         RETURN n')
 
     print('Query 2: select all patients with at least 5 measurements filtering by `training_duration < x` and `width != y`')
-    bench_query('\
+    bench_query('query2', '\
         MATCH (p:patient)-[r:measure]->(m:measurement) \
         WITH p, m, count(m) as relcount \
-        WHERE p.lwalk_training_duration < 5000 AND p.width <> 5000 AND relcount > 4 \
+        WHERE p.lwalk_td < 5000 AND p.w <> 5000 AND relcount > 4 \
         RETURN p')
+    
+    legend = plt.legend(loc='upper right', shadow=True, fontsize='x-large')
+    plt.savefig(outfile)

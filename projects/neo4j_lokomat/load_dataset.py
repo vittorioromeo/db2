@@ -33,18 +33,18 @@ def make_connection(username, password):
 def make_patient_dict(p):
     x = {
         "id": p["id"],
-        "name": p["name"],
-        "weight": p["width"],
-        "height": p["height"],
+        "n": p["name"],
+        "w": p["width"],
+        "h": p["height"],
         "l_shank": p["l_shank"],
         "l_thigh": p["l_thigh"],
-        "lokomat_shank": p["lokomat_shank"],
-        "lokomat_thigh": p["lokomat_thigh"],
-        "lokomat_recorded": p["lokomat_recorded"],
-        "version": p["version"],
-        "legtype": p["legtype"],
-        "lwalk_training_duration": p["lwalk_training_duration"],
-        "lwalk_distance": p["lwalk_distance"]
+        "lk_shank": p["lokomat_shank"],
+        "lk_thigh": p["lokomat_thigh"],
+        "lk_rec": p["lokomat_recorded"],
+        "v": p["version"],
+        "leg_t": p["legtype"],
+        "lw_td": p["lwalk_training_duration"],
+        "lw_d": p["lwalk_distance"]
     }
 
     ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int)  or isinstance(v, float) else '"' + v + '"') \
@@ -62,7 +62,7 @@ def md(x):
 def make_measurement_dict(m):
     r = StringBuilder()
 
-    r.append('bw_support:')
+    r.append('bw_sup:')
     r.append(md(m[0]))
     r.append(', ')
     
@@ -86,27 +86,27 @@ def make_measurement_dict(m):
     r.append(md(m[5]))
     r.append(', ')
 
-    r.append('offset_rom_hl:')
+    r.append('or_hl:')
     r.append(md(m[6]))
     r.append(', ')
 
-    r.append('offset_rom_kl:')
+    r.append('or_kl:')
     r.append(md(m[7]))
     r.append(', ')
 
-    r.append('offset_rom_hr:')
+    r.append('or_hr:')
     r.append(md(m[8]))
     r.append(', ')
 
-    r.append('offset_rom_kr:')
+    r.append('or_kr:')
     r.append(md(m[9]))
     r.append(', ')
 
-    r.append('guidance_l:')
+    r.append('gd_l:')
     r.append(md(m[10]))
     r.append(', ')
 
-    r.append('guidance_r:')
+    r.append('gd_r:')
     r.append(md(m[11]))
     r.append(', ')
 
@@ -114,19 +114,19 @@ def make_measurement_dict(m):
     r.append(md(m[12]))
     r.append(', ')
 
-    r.append('energy_hip_l:')
+    r.append('ey_hip_l:')
     r.append(md(m[13]))
     r.append(', ')
 
-    r.append('energy_knee_l:')
+    r.append('ey_knee_l:')
     r.append(md(m[14]))
     r.append(', ')
 
-    r.append('energy_hip_r:')
+    r.append('ey_hip_r:')
     r.append(md(m[15]))
     r.append(', ')
 
-    r.append('energy_knee_r:')
+    r.append('ey_knee_r:')
     r.append(md(m[16]))
     r.append(', ')
 
@@ -182,11 +182,11 @@ def make_measurement_dict(m):
     r.append(md(m[29]))
     r.append(', ')
 
-    r.append('unloading_l:')
+    r.append('ul_l:')
     r.append(md(m[30]))
     r.append(', ')
 
-    r.append('unloading_r:')
+    r.append('ul_r:')
     r.append(md(m[31]))
 
     return str(r)

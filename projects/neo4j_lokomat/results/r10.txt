@@ -1,15 +1,4 @@
 OUTPUT (../../dataset_lokomat/output/ds10.json):
-Initializing `master`
-`master` initialized
-Query 0: select all patients
-Time: 0.67s
-
-Query 1: select all patients by name
-Time: 0.33s
-
-Query 2: select all patients with at least 5 measurements filtering by `training_duration < x` and `width != y`
-Time: 0.90s
-
 
 
 
