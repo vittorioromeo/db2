@@ -4,6 +4,7 @@
 import neo4jrestclient
 from neo4jrestclient.client import GraphDatabase
 from neo4jrestclient import client
+import matplotlib.pyplot as plt
 
 # Import timer utilities
 import time
@@ -61,14 +62,9 @@ if __name__ == "__main__":
         WHERE n.name = "SIVV33W0" \
         RETURN n')
 
-    print('Query 2: select all patients and their corresponding health states filtering by timestamp')
+    print('Query 2: select all patients with at least 5 measurements filtering by `training_duration < x` and `width != y`')
     bench_query('\
-        MATCH (p:patient)-[r:has]->(h:health_state) \
-        WHERE h.timestamp > 5000 \
-        RETURN p, h')
-
-    print('Query 3: select therapies of patients having a device installed in a specific time range')
-    bench_query('\
-        MATCH (t:therapy)-[:manages]-(h:health_state)-[:has]-(p:patient)-[rhs:`has installed`]-(d:device) \
-        WHERE rhs.when > 5000 \
-        RETURN *')
+        MATCH (p:patient)-[r:measure]->(m:measurement) \
+        WITH p, m, count(m) as relcount \
+        WHERE p.lwalk_training_duration < 5000 AND p.width <> 5000 AND relcount > 4 \
+        RETURN p')

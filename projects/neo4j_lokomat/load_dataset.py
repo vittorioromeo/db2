@@ -34,7 +34,7 @@ def make_patient_dict(p):
     x = {
         "id": p["id"],
         "name": p["name"],
-        "width": p["width"],
+        "weight": p["width"],
         "height": p["height"],
         "l_shank": p["l_shank"],
         "l_thigh": p["l_thigh"],
@@ -62,131 +62,131 @@ def md(x):
 def make_measurement_dict(m):
     r = StringBuilder()
 
-    r.append('"bw_support":')
+    r.append('bw_support:')
     r.append(md(m[0]))
     r.append(', ')
     
-    r.append('"p_coeff":')
+    r.append('p_coeff:')
     r.append(md(m[1]))
     r.append(', ')
 
-    r.append('"rom_hl":')
+    r.append('rom_hl:')
     r.append(md(m[2]))
     r.append(', ')
 
-    r.append('"rom_kl":')
+    r.append('rom_kl:')
     r.append(md(m[3]))
     r.append(', ')
 
-    r.append('"rom_hr":')
+    r.append('rom_hr:')
     r.append(md(m[4]))
     r.append(', ')
 
-    r.append('"rom_kr":')
+    r.append('rom_kr:')
     r.append(md(m[5]))
     r.append(', ')
 
-    r.append('"offset_rom_hl":')
+    r.append('offset_rom_hl:')
     r.append(md(m[6]))
     r.append(', ')
 
-    r.append('"offset_rom_kl":')
+    r.append('offset_rom_kl:')
     r.append(md(m[7]))
     r.append(', ')
 
-    r.append('"offset_rom_hr":')
+    r.append('offset_rom_hr:')
     r.append(md(m[8]))
     r.append(', ')
 
-    r.append('"offset_rom_kr":')
+    r.append('offset_rom_kr:')
     r.append(md(m[9]))
     r.append(', ')
 
-    r.append('"guidance_l":')
+    r.append('guidance_l:')
     r.append(md(m[10]))
     r.append(', ')
 
-    r.append('"guidance_r":')
+    r.append('guidance_r:')
     r.append(md(m[11]))
     r.append(', ')
 
-    r.append('"speed":')
+    r.append('speed:')
     r.append(md(m[12]))
     r.append(', ')
 
-    r.append('"energy_hip_l":')
+    r.append('energy_hip_l:')
     r.append(md(m[13]))
     r.append(', ')
 
-    r.append('"energy_knee_l":')
+    r.append('energy_knee_l:')
     r.append(md(m[14]))
     r.append(', ')
 
-    r.append('"energy_hip_r":')
+    r.append('energy_hip_r:')
     r.append(md(m[15]))
     r.append(', ')
 
-    r.append('"energy_knee_r":')
+    r.append('energy_knee_r:')
     r.append(md(m[16]))
     r.append(', ')
 
-    r.append('"step":')
+    r.append('step:')
     r.append(md(m[17]))
     r.append(', ')
 
-    r.append('"bio_hl_st":')
+    r.append('bio_hl_st:')
     r.append(md(m[18]))
     r.append(', ')
 
-    r.append('"bio_hl_sw":')
+    r.append('bio_hl_sw:')
     r.append(md(m[19]))
     r.append(', ')
 
-    r.append('"bio_kl_st":')
+    r.append('bio_kl_st:')
     r.append(md(m[20]))
     r.append(', ')
 
-    r.append('"bio_kl_sw":')
+    r.append('bio_kl_sw:')
     r.append(md(m[21]))
     r.append(', ')
 
-    r.append('"bio_hr_st":')
+    r.append('bio_hr_st:')
     r.append(md(m[22]))
     r.append(', ')
 
-    r.append('"bio_hr_sw":')
+    r.append('bio_hr_sw:')
     r.append(md(m[23]))
     r.append(', ')
 
-    r.append('"bio_kr_st":')
+    r.append('bio_kr_st:')
     r.append(md(m[24]))
     r.append(', ')
 
-    r.append('"bio_kr_sw":')
+    r.append('bio_kr_sw:')
     r.append(md(m[25]))
     r.append(', ')
 
-    r.append('"pos_dev_hl":')
+    r.append('pos_dev_hl:')
     r.append(md(m[26]))
     r.append(', ')
 
-    r.append('"pos_dev_hr":')
+    r.append('pos_dev_hr:')
     r.append(md(m[27]))
     r.append(', ')
 
-    r.append('"light_c_l":')
+    r.append('light_c_l:')
     r.append(md(m[28]))
     r.append(', ')
 
-    r.append('"light_c_r":')
+    r.append('light_c_r:')
     r.append(md(m[29]))
     r.append(', ')
 
-    r.append('"unloading_l":')
+    r.append('unloading_l:')
     r.append(md(m[30]))
     r.append(', ')
 
-    r.append('"unloading_r":')
+    r.append('unloading_r:')
     r.append(md(m[31]))
 
     return str(r)
@@ -220,24 +220,11 @@ class master:
         tx.execute()
         tx.commit()
 
-        self.currtx = self.db.transaction(for_query=True)
-
-    def execute_generated_queries(self):
-
-        start_timer()
-        print('Executing...')
-        self.currtx.execute()
-        end_timer()
-
-        start_timer()
-        print('Committing...')
-        self.currtx.commit()
-        end_timer()
-
-        self.currtx = self.db.transaction(for_query=True)
-
-    def q(self, x):
-        self.currtx.append(str(q))
+    def do_query(self, x):
+        tx = self.db.transaction(for_query=True)
+        tx.append(x)
+        tx.execute()
+        tx.commit()
 
 t0 = []
 def start_timer():
@@ -276,21 +263,19 @@ if __name__ == "__main__":
 
     # Read dataset path from command line arguments
     dataset_path = sys.argv[1]
+    chunk_size = int(sys.argv[2])
     print('Reading dataset from "{0}"'.format(dataset_path))
 
     # Read the dataset file as json
-    start_timer()
     print('Reading json dataset file')
     dataset_file = open(dataset_path, "r")
     dataset_contents = dataset_file.read()
-    dataset_json = json.loads(dataset_contents)
-    ds_patients = dataset_json
+    ds_patients = json.loads(dataset_contents)
     print('Dataset file loaded')
-    end_timer()
 
-    chunk_size = 100
     idx = 0
 
+    print('Executing queries...')
     for i in range(0, len(ds_patients), chunk_size):
         q = StringBuilder()
 
@@ -306,12 +291,9 @@ if __name__ == "__main__":
 
             idx += 1
 
-        m.q(str(q))
+        m.do_query(str(q))
+        sys.stdout.write('\r{0}/{1}'.format(i, len(ds_patients)))
+        sys.stdout.flush()
 
-        start_timer()
-        print('Executing queries...')
-        m.execute_generated_queries()
-        end_timer()
-
-
+    print("")
     end_timer()
