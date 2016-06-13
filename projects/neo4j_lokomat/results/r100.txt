@@ -1,1 +1,0 @@
-OUTPUT (../../dataset_lokomat/output/ds100.json):

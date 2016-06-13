@@ -5,16 +5,13 @@ import neo4jrestclient
 from neo4jrestclient.client import GraphDatabase
 from neo4jrestclient import client
 
-# Import timer utilities
+# Import utilities
 import time
-
-# Import `sys` for command line argument parsing
 import sys
 import io
-
-# Import `json` to read the generated dataset
 import json
 
+# Helper class for efficient string concatenation
 class StringBuilder(object):
     def __init__(self):
         self._stringio = io.StringIO()
@@ -29,7 +26,8 @@ class StringBuilder(object):
 def make_connection(username, password):
     return GraphDatabase("http://localhost:7474", username=username, password=password)
 
-# TODO: hardcode for speed
+# Given a json `p` patient data dictionary, returns a string that can be
+# used in a Cypher query
 def make_patient_dict(p):
     x = {
         "id": p["id"],
@@ -47,149 +45,69 @@ def make_patient_dict(p):
         "lw_d": p["lwalk_distance"]
     }
 
-    ds = ', '.join("{0}: {1}".format(k, v if isinstance(v, int)  or isinstance(v, float) else '"' + v + '"') \
+    ds = ', '.join("{0}: {1}".format(\
+        k, v if isinstance(v, int)  or isinstance(v, float) else '"' + v + '"') \
             for (k, v) in x.items())
 
     return ds
 
-def md(x):
+# Given `x`, returns "null" if the value is `None`
+def null_if_none(x):
     if x == None:
         return "null"
     else:
         return x
 
-# TODO: hardcode for speed
+# Appends `key` + ":" + `m[i]`
+def make_measurement_dict_par_no_comma(sb, key, m, i):
+    sb.append(key)
+    sb.append(':')
+    sb.append(null_if_none(m[i]))
+
+# Appends `key` + ":" + `m[i]` and a comma
+def make_measurement_dict_par(sb, key, m, i):
+    make_measurement_dict_par_no_comma(sb, key, m, i)
+    sb.append(', ')
+
+# Given a measurement `m`, returns a Cypher-friendly string containing
+# its values
 def make_measurement_dict(m):
-    r = StringBuilder()
+    sb = StringBuilder()
 
-    r.append('bw_sup:')
-    r.append(md(m[0]))
-    r.append(', ')
-    
-    r.append('p_coeff:')
-    r.append(md(m[1]))
-    r.append(', ')
+    make_measurement_dict_par(sb, "bw_sup", m, 0)
+    make_measurement_dict_par(sb, "p_coeff", m, 1)
+    make_measurement_dict_par(sb, "rom_hl", m, 2)
+    make_measurement_dict_par(sb, "rom_kl", m, 3)
+    make_measurement_dict_par(sb, "rom_hr", m, 4)
+    make_measurement_dict_par(sb, "rom_kr", m, 5)
+    make_measurement_dict_par(sb, "or_hl", m, 6)
+    make_measurement_dict_par(sb, "or_kl", m, 7)
+    make_measurement_dict_par(sb, "or_hr", m, 8)
+    make_measurement_dict_par(sb, "or_kr", m, 9)
+    make_measurement_dict_par(sb, "gd_l", m, 10)
+    make_measurement_dict_par(sb, "gd_r", m, 11)
+    make_measurement_dict_par(sb, "speed", m, 12)
+    make_measurement_dict_par(sb, "ey_hip_l", m, 13)
+    make_measurement_dict_par(sb, "ey_knee_l", m, 14)
+    make_measurement_dict_par(sb, "ey_hip_r", m, 15)
+    make_measurement_dict_par(sb, "ey_knee_r", m, 16)
+    make_measurement_dict_par(sb, "step", m, 17)
+    make_measurement_dict_par(sb, "bio_hl_st", m, 18)
+    make_measurement_dict_par(sb, "bio_hl_sw", m, 19)
+    make_measurement_dict_par(sb, "bio_kl_st", m, 20)
+    make_measurement_dict_par(sb, "bio_kl_sw", m, 21)
+    make_measurement_dict_par(sb, "bio_hr_st", m, 22)
+    make_measurement_dict_par(sb, "bio_hr_sw", m, 23)
+    make_measurement_dict_par(sb, "bio_kr_st", m, 24)
+    make_measurement_dict_par(sb, "bio_kr_sw", m, 25)
+    make_measurement_dict_par(sb, "pos_dev_hl", m, 26)
+    make_measurement_dict_par(sb, "pos_dev_hr", m, 27)
+    make_measurement_dict_par(sb, "light_c_l", m, 28)
+    make_measurement_dict_par(sb, "light_c_r", m, 29)
+    make_measurement_dict_par(sb, "ul_l", m, 30)
+    make_measurement_dict_par_no_comma(sb, "ul_r", m, 31)
 
-    r.append('rom_hl:')
-    r.append(md(m[2]))
-    r.append(', ')
-
-    r.append('rom_kl:')
-    r.append(md(m[3]))
-    r.append(', ')
-
-    r.append('rom_hr:')
-    r.append(md(m[4]))
-    r.append(', ')
-
-    r.append('rom_kr:')
-    r.append(md(m[5]))
-    r.append(', ')
-
-    r.append('or_hl:')
-    r.append(md(m[6]))
-    r.append(', ')
-
-    r.append('or_kl:')
-    r.append(md(m[7]))
-    r.append(', ')
-
-    r.append('or_hr:')
-    r.append(md(m[8]))
-    r.append(', ')
-
-    r.append('or_kr:')
-    r.append(md(m[9]))
-    r.append(', ')
-
-    r.append('gd_l:')
-    r.append(md(m[10]))
-    r.append(', ')
-
-    r.append('gd_r:')
-    r.append(md(m[11]))
-    r.append(', ')
-
-    r.append('speed:')
-    r.append(md(m[12]))
-    r.append(', ')
-
-    r.append('ey_hip_l:')
-    r.append(md(m[13]))
-    r.append(', ')
-
-    r.append('ey_knee_l:')
-    r.append(md(m[14]))
-    r.append(', ')
-
-    r.append('ey_hip_r:')
-    r.append(md(m[15]))
-    r.append(', ')
-
-    r.append('ey_knee_r:')
-    r.append(md(m[16]))
-    r.append(', ')
-
-    r.append('step:')
-    r.append(md(m[17]))
-    r.append(', ')
-
-    r.append('bio_hl_st:')
-    r.append(md(m[18]))
-    r.append(', ')
-
-    r.append('bio_hl_sw:')
-    r.append(md(m[19]))
-    r.append(', ')
-
-    r.append('bio_kl_st:')
-    r.append(md(m[20]))
-    r.append(', ')
-
-    r.append('bio_kl_sw:')
-    r.append(md(m[21]))
-    r.append(', ')
-
-    r.append('bio_hr_st:')
-    r.append(md(m[22]))
-    r.append(', ')
-
-    r.append('bio_hr_sw:')
-    r.append(md(m[23]))
-    r.append(', ')
-
-    r.append('bio_kr_st:')
-    r.append(md(m[24]))
-    r.append(', ')
-
-    r.append('bio_kr_sw:')
-    r.append(md(m[25]))
-    r.append(', ')
-
-    r.append('pos_dev_hl:')
-    r.append(md(m[26]))
-    r.append(', ')
-
-    r.append('pos_dev_hr:')
-    r.append(md(m[27]))
-    r.append(', ')
-
-    r.append('light_c_l:')
-    r.append(md(m[28]))
-    r.append(', ')
-
-    r.append('light_c_r:')
-    r.append(md(m[29]))
-    r.append(', ')
-
-    r.append('ul_l:')
-    r.append(md(m[30]))
-    r.append(', ')
-
-    r.append('ul_r:')
-    r.append(md(m[31]))
-
-    return str(r)
+    return str(sb)
 
 # Class containing an open neo4j connection and functions to manage the data
 class master:
@@ -203,12 +121,10 @@ class master:
     def __init__(self, db):
         self.db = db
         self.labels = {}
-        self.queries = []
 
     # Completely clears the database
     def delete_everything(self):
-        q = '''MATCH (n) DETACH
-        DELETE n'''
+        q = 'MATCH (n) DETACH DELETE n'
 
         self.db.query(q)
 
@@ -226,6 +142,7 @@ class master:
         tx.execute()
         tx.commit()
 
+# Benchmark utilities
 t0 = []
 def start_timer():
     global t0
@@ -246,53 +163,52 @@ if __name__ == "__main__":
     m.delete_everything()
     print('`master` initialized')
 
-    def bench_execute_generated_queries():
-        start_timer()
-        print('Executing queries...')
-        m.execute_generated_queries()
-        end_timer()
-
-    def bench_execute_fill_ds(msg, collection, f):
-        start_timer()
-        print("Filling: " + msg)
-        for x in collection:
-            f()
-        end_timer()
-
-        bench_execute_generated_queries()
-
     # Read dataset path from command line arguments
     dataset_path = sys.argv[1]
+
+    # Read how many queries to batch per transaction
     chunk_size = int(sys.argv[2])
-    print('Reading dataset from "{0}"'.format(dataset_path))
 
     # Read the dataset file as json
-    print('Reading json dataset file')
+    print('Reading dataset from "{0}"'.format(dataset_path))    
     dataset_file = open(dataset_path, "r")
     dataset_contents = dataset_file.read()
     ds_patients = json.loads(dataset_contents)
     print('Dataset file loaded')
 
+    # Index used to generate unique node names
     idx = 0
 
     print('Executing queries...')
     for i in range(0, len(ds_patients), chunk_size):
         q = StringBuilder()
 
+        # Iterate patients in chunks
         for p in ds_patients[i:i + chunk_size]:
-            q.append("CREATE (n"+str(idx)+":patient {")
+
+            # Stringify `idx`
+            sidx = str(idx)
+
+            # Generate patient node creation query
+            q.append("CREATE (n")
+            q.append(sidx)
+            q.append(":patient {")
             q.append(make_patient_dict(p))
             q.append("})\n")
 
+            # Generate measurement queries, which build relationships
             for s in p["step_datas"]:
-                q.append("CREATE (n"+str(idx)+")-[:measure]->(:measurement {")
+                q.append("CREATE (n")
+                q.append(sidx)
+                q.append(")-[:measure]->(:measurement {")
                 q.append(make_measurement_dict(s))
                 q.append("})\n")
 
+            # Increment next unique node id
             idx += 1
 
         m.do_query(str(q))
-        sys.stdout.write('\r{0}/{1}'.format(i, len(ds_patients)))
+        sys.stdout.write('\r{0}/{1}'.format(i, len(ds_patients) - 1))
         sys.stdout.flush()
 
     print("")
