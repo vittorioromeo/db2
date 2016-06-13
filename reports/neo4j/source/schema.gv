@@ -1,0 +1,15 @@
+
+
+digraph
+{
+    rankdir=LR
+
+    patient [shape="rectangle"]
+    measurement [shape="rectangle"]
+    has [shape="diamond"]
+
+    patient -> has [label="0..N" dir="none"]
+    has -> measurement [label="1..1" dir="none"]
+}
+
+
