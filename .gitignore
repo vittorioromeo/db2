@@ -63,3 +63,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+
+reports/neo4j/temp/
+reports/neo4j/output/
+_minted-report
