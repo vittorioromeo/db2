@@ -1,4 +1,4 @@
-import print_r as print_r
+import os
 from pymongo import *
 import matplotlib.pyplot as plt
 import time
@@ -8,10 +8,14 @@ from query import *
 client = MongoClient("localhost", 27017)
 db = client.test
 
-#listaDataSet = ['ds10.json','ds100.json','ds1000.json','ds10000.json','ds100000.json']
-listaDataSet = ['ds10.json']
+listaDataSet = ['ds10.json','ds100.json','ds1000.json','ds10000.json','ds100000.json']
+#listaDataSet = ['ds10.json']
 
-listaQuery = [primaQuery, secondaQuery]
+directory = "result"
+if not os.path.exists(directory):
+    os.makedirs(directory)
+
+listaQuery = [primaQuery, secondaQuery, terzaQuery]
 tempototaleIniziale = time.time()
 #Eseguo il tutto per ogni dataset
 for dataset in listaDataSet:
@@ -34,7 +38,9 @@ for dataset in listaDataSet:
             tempoFinale = time.time() - tempo
             tempi.append(tempoFinale)
         plt.plot(tempi)
-        plt.savefig(dataset + 'Query' + str(i) + '.png')
+        plt.ylabel("Query n " + str(i))
+        plt.xlabel(dataset)
+        plt.savefig('result/' + dataset + 'Query' + str(i) + '.png')
         plt.clf()
 
 tempototaleFinale = time.time()

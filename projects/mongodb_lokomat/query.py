@@ -34,5 +34,5 @@ def secondaQuery(db):
 
 def terzaQuery(db):
     collection = db.Patients
-    patients = collection.find({'lwalk_training_duration' : { $lt : 5} , : 'KBN96H9'})
+    patients = collection.find({'lwalk_training_duration' : { '$lt' : 5000} , 'width' : { '$ne' : 0.7830777515902633 }, 'step_datas' : { '$size' : 2} })
     return patients
