@@ -1,45 +1,21 @@
 #!/bin/bash
 
-mkdir results
+mkdir -p results
 
-echo "Loading and benchmarking 10"
-DS="../../dataset/output/ds10.json"
-OF="./results/r10.txt"
-python3 -O ./load_dataset.py "${DS}"
-echo "OUTPUT (${DS}):" > "${OF}"
-python3 -O ./queries.py >> "${OF}"
-printf "\n\n\n" >> "${OF}"
+VALUES=(10 100 1000 10000 100000)
+CHUNKS=(1 1 5 10 50)
+ICHUNK=0
 
-echo "Loading and benchmarking 100"
-DS="../../dataset/output/ds100.json"
-OF="./results/r100.txt"
-python3 -O ./load_dataset.py "${DS}"
-echo "OUTPUT (${DS}):" > "${OF}"
-python3 -O ./queries.py >> "${OF}"
-printf "\n\n\n" >> "${OF}"
-
-echo "Loading and benchmarking 1000"
-DS="../../dataset/output/ds1000.json"
-OF="./results/r1000.txt"
-python3 -O ./load_dataset.py "${DS}"
-echo "OUTPUT (${DS}):" > "${OF}"
-python3 -O ./queries.py >> "${OF}"
-printf "\n\n\n" >> "${OF}"
-
-echo "Loading and benchmarking 10000"
-DS="../../dataset/output/ds10000.json"
-OF="./results/r10000.txt"
-python3 -O ./load_dataset.py "${DS}"
-echo "OUTPUT (${DS}):" > "${OF}"
-python3 -O ./queries.py >> "${OF}"
-printf "\n\n\n" >> "${OF}"
-
-echo "Loading and benchmarking 100000"
-DS="../../dataset/output/ds100000.json"
-OF="./results/r100000.txt"
-python3 -O ./load_dataset.py "${DS}"
-echo "OUTPUT (${DS}):" > "${OF}"
-python3 -O ./queries.py >> "${OF}"
-printf "\n\n\n" >> "${OF}"
+for i in "${VALUES[@]}"
+do
+    echo "Loading and benchmarking ${i}"
+    DS="../../dataset_lokomat/output/ds${i}.json"
+    OF="./results/r${i}.png"
+    python3 -O ./load_dataset.py "${DS}" "${CHUNKS[$ICHUNK]}"
+    ((ICHUNK++))
+    echo "OUTPUT (${DS}):" > "${OF}"
+    python3 -O ./queries.py "${OF}"
+    printf "\n\n\n" >> "${OF}"
+done
 
 echo "Done"

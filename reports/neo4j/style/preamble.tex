@@ -1,0 +1,67 @@
+
+\renewcommand{\contentsname}{Table of Contents}
+\setcounter{tocdepth}{3}
+
+
+\usepackage{fancyhdr}
+\pagestyle{plain}
+
+
+\usepackage{wallpaper}
+
+
+\usepackage{ctable}
+
+
+\usepackage{morefloats}
+\usepackage{minted}
+
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\defaultfontfeatures{Mapping=tex-text} 
+
+
+\DeclareMathSizes{12}{13}{7}{7}
+\usepackage{sectsty}
+\usepackage[normalem]{ulem}
+\sectionfont{\rmfamily\mdseries\Large}
+\subsectionfont{\rmfamily\mdseries\scshape\large}
+\subsubsectionfont{\rmfamily\bfseries\upshape\large}
+
+
+
+
+
+\usepackage[font={footnotesize,sf}]{caption}
+
+\usepackage{siunitx}
+
+
+\usepackage{setspace}
+
+
+\raggedbottom
+
+\definecolor{codebg}{rgb}{0.965,0.965,0.965}
+
+\renewcommand{\theFancyVerbLine}{\sffamily
+\textcolor[rgb]{0.5,0.5,0.5}{\scriptsize
+\oldstylenums{\arabic{FancyVerbLine}}}}
+
+\usepackage[top=1.4in,bottom=1.4in,left=1.2in,right=1.1in]{geometry}
+
+\setlength{\parskip}{9pt}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=false,
+  linkcolor=blue,
+  citecolor=blue,
+  unicode
+}
+
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{array}
+\newcolumntype{x}[1]{
+>{\centering\arraybackslash}m{#1}}

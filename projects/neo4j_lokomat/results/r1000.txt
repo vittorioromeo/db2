@@ -1,17 +1,14 @@
-OUTPUT (../../dataset/output/ds1000.json):
+OUTPUT (../../dataset_lokomat/output/ds1000.json):
 Initializing `master`
 `master` initialized
 Query 0: select all patients
-Time: 5.12s
+Time: 4.50s
 
 Query 1: select all patients by name
-Time: 0.51s
+Time: 0.39s
 
-Query 2: select all patients and their corresponding health states filtering by timestamp
-Time: 0.67s
-
-Query 3: select therapies of patients having a device installed in a specific time range
-Time: 0.45s
+Query 2: select all patients with at least 5 measurements filtering by `training_duration < x` and `width != y`
+Time: 2.37s
 
 
 
