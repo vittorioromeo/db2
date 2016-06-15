@@ -8,6 +8,8 @@ OUTPUTDIR=$(BASEDIR)/output
 STYLEDIR=$(BASEDIR)/style
 
 pdf:
+	mkdir -p temp
+
 	pp -en "$(INPUTDIR)"/**.md > "$(TEMPDIR)"/merged.md
 	pandoc "$(TEMPDIR)"/merged.md \
 	-S \
@@ -26,4 +28,15 @@ pdf:
 	
 	mv ./report.* "$(OUTPUTDIR)"
 
-.PHONY: pdf
+odt: 
+	mkdir -p temp
+
+	pp -en "$(INPUTDIR)"/**.md > "$(TEMPDIR)"/merged.md
+	pandoc "$(TEMPDIR)"/merged.md \
+	-S \
+	--standalone \
+	-o "$(OUTPUTDIR)/report.odt" \
+	-N \
+	--verbose 2>pandoc.log 
+
+.PHONY: pdf odt
