@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import scipy.stats as ss
 from matplotlib.font_manager import FontProperties
 from pymongo import *
 import matplotlib.pyplot as plt
@@ -12,8 +13,8 @@ db = client.test
 
 listaDataSet = ['ds10.json','ds100.json','ds1000.json','ds10000.json','ds100000.json']
 listaDatiPrimaQuery = []
-listaDatiOtherQuery = []
-listTitoli = ['Benchmark prima query', 'Benchmark seconda query', 'Benchmark terza query']
+listaTempiOtherQuery = []
+listTitoli = ['Benchmark first query', 'Benchmark second query', 'Benchmark third query']
 #listaDataSet = ['ds10.json','ds100.json']
 
 directory = "result"
@@ -36,6 +37,7 @@ for dataset in listaDataSet:
     for query in listaQuery:
         #Stessa query 31 volte
         sommaTempi = 0
+        tempiOtherQuery = []
         for _ in range(0, 31):
             tempo = time.time()
             query(db)
@@ -43,19 +45,24 @@ for dataset in listaDataSet:
             if (_ == 0):
                 listaDatiPrimaQuery.append(tempoFinale)
             else:
-                sommaTempi = sommaTempi + tempoFinale
-        sommaTempi = sommaTempi / 30
-        listaDatiOtherQuery.append(sommaTempi)
+                tempiOtherQuery.append(tempoFinale)
+        listaTempiOtherQuery.append(tempiOtherQuery)
 
 i = 0
 for __ in range(0, 3):
     numDataset = 0
     for _ in range(0,5):
         print i
-        istogrammaPrimaQuery = plt.bar(numDataset, listaDatiPrimaQuery[i], 0.5, color='b')
+
+        istogrammaPrimaQuery = plt.bar(numDataset, (listaDatiPrimaQuery[i]), 0.5, color='b')
+
+        #dati per la confidenza d'intervallo del 95%
+        mean = np.mean(listaTempiOtherQuery[i])
+        stddev = np.std(listaTempiOtherQuery[i])
+        conf = 0.95 * (stddev / np.math.sqrt(len(listaTempiOtherQuery[i])))
 
         numDataset = numDataset + 0.5
-        istogrammaOtherQuery = plt.bar(numDataset, listaDatiOtherQuery[i], 0.5, color='r')
+        istogrammaOtherQuery = plt.bar(numDataset, mean, 0.5, color='r', yerr=conf, ecolor='black')
         numDataset = numDataset + 1.5
         i = i + 1
     plt.ylabel('Time', fontsize=12)
@@ -64,8 +71,7 @@ for __ in range(0, 3):
     plt.xticks([0.5, 2.5, 4.5, 6.5, 8.5], ['10', '100', '1000', '10000', '100000'], rotation='horizontal')
     fontP = FontProperties()
     fontP.set_size('small')
-    #legend([plot1], "title", prop=fontP)
-    plt.legend([istogrammaPrimaQuery, istogrammaOtherQuery], ('Prima Query', 'Media altre query'), prop=fontP, loc='upper center', bbox_to_anchor=(0.5, -0.05),
+    plt.legend([istogrammaPrimaQuery, istogrammaOtherQuery], ('First Query', 'Avg other query'), prop=fontP, loc='upper center', bbox_to_anchor=(0.5, -0.05),
               fancybox=True, shadow=True, ncol=2)
     plt.savefig('result/' + listTitoli[__] + '.png')
     plt.clf()
