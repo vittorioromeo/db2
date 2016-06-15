@@ -4,7 +4,8 @@
 mkdir -p results
 
 # Dataset N array
-VALUES=(10 100 1000 10000 100000)
+# VALUES=(10 100 1000 10000 100000)
+VALUES=(1000 10000)
 
 # Load dataset chunk N array
 CHUNKS=(1 1 1 5 10)
@@ -20,7 +21,7 @@ do
     DS="../../dataset_lokomat/output/ds${i}.json"
 
     # Output graph path
-    OF="./results/r${i}.png"
+    OF="./results/r${i}.txt"
 
     # Load dataset
     python3 -O ./load_dataset.py "${DS}" "${CHUNKS[$ICHUNK]}"
@@ -28,8 +29,11 @@ do
     # Increment index for next chunk
     ((ICHUNK++))
 
-    # Run queries and create plots
-    python3 -O ./queries.py "${OF}"
+    # Run queries and create plot data
+    python3 -O ./queries.py > "${OF}"
 done
+
+# Create plots
+python3 -O ./make_plots.py
 
 echo "Done"
