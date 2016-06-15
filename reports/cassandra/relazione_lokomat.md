@@ -84,7 +84,8 @@ def query2():
 
 def query3():
     x = []
-    risultato = query("select * from patient where lwalk_training_duration < 2400 allow filtering;")
+    risultato = query("select * from patient where " \
+        "lwalk_training_duration < 2400 allow filtering;")
     for a in risultato:
         if (a[11] != None):
             if ((a[13] != 0.80) and (len(a[11]) > 4)):
