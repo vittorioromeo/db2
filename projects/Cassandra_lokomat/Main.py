@@ -1,8 +1,9 @@
 import Connection
 import getJson
-import time
+import datetime
 import matplotlib.pyplot as plt
-
+import numpy
+import math
 
 def eliminaTuttiDati():
     tab = ["patient"]
@@ -41,69 +42,130 @@ def inserisciAllData(scelta):
 
         Connection.update(query)
 
+def printMedia(all_first, all_media, scelta):
+    all_mean = []
+    all_stddev = []
+    all_conf = []
+    eConf = {'ecolor': '0.3'}
 
-def funzione(scelta):
-    tempi = []
-    for _ in range(0,31):
-        tPrima = time.time()
-        risultato = Connection.query("select * from patient;")
-        tTotale = time.time() - tPrima
-        tempi.append(tTotale)
+    # Media delle query
+    for a in all_media:
+        mean = numpy.mean(a)
+        stddev = numpy.std(a)
+        conf = 0.95 * (stddev / math.sqrt(len(a)))
+        all_mean.append(mean)
+        all_stddev.append(stddev)
+        all_conf.append(conf)
 
-    plt.plot(tempi)
-    plt.ylabel("Query n " + str(1))
-    plt.xlabel(scelta)
-    plt.savefig('doc/' + str(scelta) + 'Query' + str(1) + '.png')
+    count = 0
+    for firstTime in all_first:
+        plt.bar(count, firstTime, width=0.5, color='g')
+        count += 2
+
+    count = 0
+    i=0
+    while(i<len(all_mean)):
+        plt.bar(count + 0.5, all_mean[i], width=0.5, yerr=all_conf[i], error_kw=eConf, color='r')
+        count += 2
+        i += 1
+
+    plt.xticks([0.5, 2.5, 4.5, 6.5], ['10', '100', '1000', '10000'])
+    plt.savefig('doc/query' + str(scelta+1) + '.png')
     plt.clf()
 
-    print "Il tempo per fare la query 1 e': " + str(tTotale)
+def iterazioneQuery():
 
-    tempi = []
-    for _ in range(0,31):
-        tPrima = time.time()
-        risultato = Connection.query("SELECT * FROM patient WHERE name = 'SIVV33W0' allow filtering;")
-        tTotale = time.time() - tPrima
-        tempi.append(tTotale)
+    for i in range(0,2):
+        if(i==0):
 
-    plt.plot(tempi)
-    plt.ylabel("Query n " + str(2))
-    plt.xlabel(scelta)
-    plt.savefig('doc/' + str(scelta) + 'Query' + str(2) + '.png')
-    plt.clf()
+            tempi = []
+            all_media = []
+            all_first = []
 
-    print "Il tempo per fare la query 2 e': " + str(tTotale)
+            for a in range(0,4):
+                print "situazione: query " + str(i+1) + " dataset " + str(a+1)
+                #elimino dati su db e carico dataset
+                eliminaTuttiDati()
+                inserisciAllData(a)
+                for _ in range(0, 31):
+                    #eseguo la prima query sul dataset 30 volte
+                    tPrima = datetime.datetime.now()
+                    risultato = Connection.query1()
+                    tTotale = datetime.datetime.now() - tPrima
+                    tTotale = tTotale.total_seconds()
+                    tempi.append(tTotale)
+                # dentro first metto il tempo di esecuzione della prima query
+                # dentro tempi i rimanenti 30 tempi calcolati
+                first = tempi[0]
+                tempi = tempi[1:]
 
-    tempi = []
-    x = []
-    for _ in range(0,31):
-        tPrima = time.time()
-        risultato = Connection.query("select * from patient where lwalk_training_duration > 5000 allow filtering;")
-        for a in risultato:
-            if(a[11] != None):
-                if((a[13]!=0.70338464) and (len(a[11])>4)):
-                    x.append(a)
-        tTotale = time.time() - tPrima
-        tempi.append(tTotale)
+                all_media.append(tempi)
+                all_first.append(first)
 
-    plt.plot(tempi)
-    plt.ylabel("Query n " + str(3))
-    plt.xlabel(scelta)
-    plt.savefig('doc/' + str(scelta) + 'Query' + str(3) + '.png')
-    plt.clf()
+            printMedia(all_first, all_media, i)
 
-    print "Il tempo per fare la query 3 e': " + str(tTotale)
+        elif(i==1):
 
-scelta = 0
-while (scelta < 4):
-    print scelta
+            tempi = []
+            all_media = []
+            all_first = []
 
+            for a in range(0, 4):
+                print "situazione: query " + str(i + 1) + " dataset " + str(a + 1)
+                # elimino dati su db e carico dataset
+                eliminaTuttiDati()
+                inserisciAllData(a)
+                for _ in range(0, 31):
+                    # eseguo la prima query sul dataset 30 volte
+                    tPrima = datetime.datetime.now()
+                    risultato = Connection.query2()
+                    tTotale = datetime.datetime.now() - tPrima
+                    tTotale = tTotale.total_seconds()
+                    tempi.append(tTotale)
+                # dentro first metto il tempo di esecuzione della prima query
+                # dentro tempi i rimanenti 30 tempi calcolati
+                first = tempi[0]
+                tempi = tempi[1:]
 
-    print "elimino elementi dal DB"
-    eliminaTuttiDati()
-    print "inserisco gli elementi dal DB"
-    inserisciAllData(scelta)
-    print "inizio le query"
+                all_media.append(tempi)
+                all_first.append(first)
 
-    funzione(scelta)
+            printMedia(all_first, all_media, i)
 
-    scelta = scelta + 1
+        elif(i==2):
+
+            tempi = []
+            all_media = []
+            all_first = []
+
+            for a in range(0, 4):
+                print "situazione: query " + str(i + 1) + " dataset " + str(a + 1)
+                # elimino dati su db e carico dataset
+                eliminaTuttiDati()
+                inserisciAllData(a)
+                for _ in range(0, 31):
+                    # eseguo la prima query sul dataset 30 volte
+                    tPrima = datetime.datetime.now()
+                    risultato = Connection.query3()
+                    tTotale = datetime.datetime.now() - tPrima
+                    tTotale = tTotale.total_seconds()
+                    tempi.append(tTotale)
+                # dentro first metto il tempo di esecuzione della prima query
+                # dentro tempi i rimanenti 30 tempi calcolati
+                first = tempi[0]
+                tempi = tempi[1:]
+
+                all_media.append(tempi)
+                all_first.append(first)
+
+            printMedia(all_first, all_media, i)
+
+        i+=1
+
+plt.clf()
+print("inizio processo")
+tPrima = datetime.datetime.now()
+iterazioneQuery()
+tTotale = datetime.datetime.now() - tPrima
+tTotale = tTotale.total_seconds()
+print("processo terminato in: " +str(tTotale)+ " secondi")

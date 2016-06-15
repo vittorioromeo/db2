@@ -20,6 +20,5 @@ def settaData(scelta):
 
 def getAllData(scelta):
     record = settaData(scelta)
-    all = record
-    return all
+    return record
 
