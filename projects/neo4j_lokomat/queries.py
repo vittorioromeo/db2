@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # print('Query 1: select all patients by name')
     bench_query('query1', '''
         MATCH (n:patient)
-        WHERE n.n = "SIVV33W0"
+        WHERE n.n = "KRVYRSKX7"
         RETURN n''')
 
     # print('''Query 2: select all patients with at least 5 measurements filtering 
@@ -67,5 +67,5 @@ if __name__ == "__main__":
     bench_query('query2', '''
         MATCH (p:patient)-[r:measure]->(m:measurement)
         WITH p, m, count(m) as relcount
-        WHERE p.lwalk_td < 5000 AND p.w <> 5000 AND relcount > 4
+        WHERE p.lwalk_td < 2400 AND p.w <> 0.80 AND relcount > 5
         RETURN p''')

@@ -29,10 +29,10 @@ def primaQuery(db):
 
 def secondaQuery(db):
     collection = db.Patients
-    patients = collection.find({'name' : 'KBN96H9'})
+    patients = collection.find({'name' : 'KRVYRSKX7'})
     return patients
 
 def terzaQuery(db):
     collection = db.Patients
-    patients = collection.find({'lwalk_training_duration' : { '$lt' : 5000} , 'width' : { '$ne' : 0.7830777515902633 }, 'step_datas' : { '$size' : 2} })
+    patients = collection.find({'lwalk_training_duration' : { '$lt' : 2400} , 'width' : { '$ne' : 0.80 }, 'step_datas' : { '$size' : 5} })
     return patients

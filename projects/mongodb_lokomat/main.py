@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import scipy.stats as ss
 from matplotlib.font_manager import FontProperties
 from pymongo import *
 import matplotlib.pyplot as plt
@@ -48,6 +47,7 @@ for dataset in listaDataSet:
                 tempiOtherQuery.append(tempoFinale)
         listaTempiOtherQuery.append(tempiOtherQuery)
 
+#Grafici
 i = 0
 for __ in range(0, 3):
     numDataset = 0
@@ -71,8 +71,8 @@ for __ in range(0, 3):
     plt.xticks([0.5, 2.5, 4.5, 6.5, 8.5], ['10', '100', '1000', '10000', '100000'], rotation='horizontal')
     fontP = FontProperties()
     fontP.set_size('small')
-    plt.legend([istogrammaPrimaQuery, istogrammaOtherQuery], ('First Query', 'Avg other query'), prop=fontP, loc='upper center', bbox_to_anchor=(0.5, -0.05),
-              fancybox=True, shadow=True, ncol=2)
+    plt.legend([istogrammaPrimaQuery, istogrammaOtherQuery], ('First Query', 'Avg other query'), prop=fontP, loc='upper center',
+               bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=True, ncol=2)
     plt.savefig('result/' + listTitoli[__] + '.png')
     plt.clf()
 
