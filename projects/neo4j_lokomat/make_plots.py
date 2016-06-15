@@ -1,42 +1,39 @@
 # Import utilities
 import time
 import sys
+import numpy
+import math
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
-def read_first_and_average(dataset_path, offset, count):
+def statistics(dataset_path, offset, count):
     with open(dataset_path, 'r') as f:
-        lines = f.readlines()
+        values = [float(x) for x in f.readlines()]
 
     # Get first query time
-    first = float(lines[offset])
+    first = values[offset]
+
+    # Other values
+    other_values = values[offset+1:offset+count]
 
     # Get average time of remaining queries
-    avg = 0
-    ymin = 10000
-    ymax = 0
-    for i in range(offset + 1, offset + count):
-        v = float(lines[i])
-        if v < ymin: ymin = v
-        if v > ymax: ymax = v
-        avg += v
-    avg = avg / float(count - 1)
+    mean = numpy.mean(other_values)
+    stddev = numpy.std(other_values)
+    conf = 0.95 * (stddev / math.sqrt(len(other_values)))
 
-    err = ymax - ymin
-
-    return (first, avg, err / 2)
+    return (first, mean, conf)
 
 def create_plot(plot_title, datasets, offset, count, output_path):
     x = 0
 
     for dataset_path in datasets:
 
-        first,average,err = read_first_and_average(dataset_path, offset, count)
+        first,average,conf = statistics(dataset_path, offset, count)
 
         b_first = plt.bar(x, first, 0.5, color='b')
         x += 0.5
 
-        b_average = plt.bar(x, average, 0.5, color='r', yerr=err, ecolor='black')
+        b_average = plt.bar(x, average, 0.5, color='r', yerr=conf, ecolor='black')
         x += 1.5
 
     plt.title("benchmark: " + plot_title)
