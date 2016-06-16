@@ -15,6 +15,7 @@ pdf:
 	-S \
 	--standalone \
 	--filter "$(BASEDIR)/pandoc-minted.py" \
+	--filter pandoc-citeproc \
 	-o "$(OUTPUTDIR)/report.tex" \
 	-H "$(STYLEDIR)/preamble.tex" \
 	-V fontsize=12pt \
