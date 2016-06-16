@@ -32,10 +32,9 @@ for dataset in listaDataSet:
                            ,i['lokomat_recorded'],i['version'],i['legtype'],i['lwalk_training_duration'],i['lwalk_distance']
                            ,i['step_datas'])
     #Eseguo query
-    contatoreQuery = 0
+    contatore = 0
     for query in listaQuery:
         #Stessa query 31 volte
-        sommaTempi = 0
         tempiOtherQuery = []
         for _ in range(0, 31):
             tempo = time.time()
@@ -43,16 +42,19 @@ for dataset in listaDataSet:
             tempoFinale = time.time() - tempo
             if (_ == 0):
                 listaDatiPrimaQuery.append(tempoFinale)
+                print str("PRIMA QUERY ") + str(tempoFinale) + str("\n")
             else:
                 tempiOtherQuery.append(tempoFinale)
+                print str(tempoFinale)
         listaTempiOtherQuery.append(tempiOtherQuery)
+        contatore = contatore + 1
+
 
 #Grafici
-i = 0
 for __ in range(0, 3):
+    i = __
     numDataset = 0
     for _ in range(0,5):
-        print i
 
         istogrammaPrimaQuery = plt.bar(numDataset, (listaDatiPrimaQuery[i]), 0.5, color='b')
 
@@ -64,7 +66,8 @@ for __ in range(0, 3):
         numDataset = numDataset + 0.5
         istogrammaOtherQuery = plt.bar(numDataset, mean, 0.5, color='r', yerr=conf, ecolor='black')
         numDataset = numDataset + 1.5
-        i = i + 1
+        i = i + 3
+
     plt.ylabel('Time', fontsize=12)
     plt.xlabel('Dataset', fontsize=12)
     plt.title(listTitoli[__])
