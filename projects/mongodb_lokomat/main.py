@@ -80,4 +80,5 @@ for __ in range(0, 3):
     plt.clf()
 
 tempototaleFinale = time.time()
+client.close();
 print str("Il tempo totale e : ") + str(tempototaleFinale-tempototaleIniziale)
